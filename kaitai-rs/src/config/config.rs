@@ -36,4 +36,11 @@ impl Config {
 
     // Enum name pattern
     pub const ENUM_NAME_PATTERN: &'static str = concat!(r"^[a-z][a-z0-9_]*$");
+
+    // Type name pattern
+    pub const TYPE_NAME_PATTERN: &'static str =
+        concat!(r"^([a-z][a-z0-9_]*::)*[a-z][a-z0-9_]*(\(.+\))?$");
+
+    // Process pattern
+    pub const PROCESS_PATTERN: &'static str = concat!(r"^zlib|(xor|rol|ror)\(.*\)$");
 }
