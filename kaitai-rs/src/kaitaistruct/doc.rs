@@ -1,10 +1,8 @@
 use crate::kaitaistruct::kaitai_property::KaitaiProperty;
 
 /// Doc property struct
-///
-/// Contains:
-/// 1. A description of the Kaitai struct
 pub struct Doc {
+    // description of the Kaitai struct
     pub description: Option<String>,
 }
 

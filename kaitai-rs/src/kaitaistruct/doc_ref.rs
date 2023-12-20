@@ -1,12 +1,10 @@
 use crate::kaitaistruct::kaitai_property::KaitaiProperty;
 
 /// DocRef property struct
-///
-/// Contains:
-/// 1. URL as text,
-/// 2. An arbitrary string
 pub struct DocRef {
+    // DocRef URL
     pub url: Option<String>,
+    // Arbitrary string
     pub arbitrary_string: Option<String>,
 }
 

@@ -1,21 +1,34 @@
 // Import necessary modules and dependencies
 use crate::config::config::Config;
 use crate::errors::KaitaiError;
+use crate::utils::utils::validate_values;
 use regex::Regex;
 
-// Meta struct, representing metadata
-struct Meta {
+/// Meta struct, representing metadata
+pub struct Meta {
+    // identifier information
     pub identifier: Identifier,
+    // title of the Kaitai Struct
     pub title: String,
+    // file extension information
     pub application: Application,
+    // cross-referencing details
     pub file_extension: FileExtension,
+    // cross-referencing details
     pub xref: XRef,
+    // license type
     pub license: String,
+    // Kaitai Struct version
     pub ks_version: KsVersion,
+    // boolean flag indicating whether KS opaque types are used
     pub ks_debug: bool,
+    // boolean flag indicating whether KS opaque types are used
     pub ks_opaque_types: bool,
+    // import information
     pub imports: Imports,
+    // encoding used in the KS file
     pub encoding: String,
+    // endian used in the KS (le/be)
     pub endian: Endian,
 }
 
@@ -27,14 +40,11 @@ struct Identifier {
 impl Identifier {
     fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
         // Check if all values match the identifier pattern
-        let regex =
-            Regex::new(Config::IDENTIFIER_PATTERN).map_err(|_| KaitaiError::BadMetaIdentifier)?;
-
-        for value in &values {
-            if !regex.is_match(value) {
-                return Err(KaitaiError::BadMetaIdentifier);
-            }
-        }
+        validate_values(
+            &values,
+            Config::IDENTIFIER_PATTERN,
+            KaitaiError::BadMetaIdentifier,
+        )?;
 
         Ok(Identifier { value: values })
     }
@@ -85,14 +95,11 @@ struct ForensicWiki {
 impl ForensicWiki {
     fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
         // Check if all values match the media wiki page pattern
-        let regex = Regex::new(Config::MEDIA_WIKI_PAGE_NAME_PATTERN)
-            .map_err(|_| KaitaiError::BadWikiPageName)?;
-
-        for value in &values {
-            if !regex.is_match(value) {
-                return Err(KaitaiError::BadWikiPageName);
-            }
-        }
+        validate_values(
+            &values,
+            Config::MEDIA_WIKI_PAGE_NAME_PATTERN,
+            KaitaiError::BadWikiPageName,
+        )?;
 
         Ok(ForensicWiki { value: values })
     }
@@ -111,13 +118,7 @@ struct ISO {
 impl ISO {
     fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
         // Check if all values match the ISO pattern
-        let regex = Regex::new(Config::ISO_IDENTIFIER_PATTERN).map_err(|_| KaitaiError::BadISO)?;
-
-        for value in &values {
-            if !regex.is_match(value) {
-                return Err(KaitaiError::BadISO);
-            }
-        }
+        validate_values(&values, Config::ISO_IDENTIFIER_PATTERN, KaitaiError::BadISO)?;
 
         Ok(ISO { value: values })
     }
@@ -136,14 +137,11 @@ struct JustSolve {
 impl JustSolve {
     fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
         // Check if all values match the media wiki page pattern
-        let regex = Regex::new(Config::MEDIA_WIKI_PAGE_NAME_PATTERN)
-            .map_err(|_| KaitaiError::BadJustSolve)?;
-
-        for value in &values {
-            if !regex.is_match(value) {
-                return Err(KaitaiError::BadJustSolve);
-            }
-        }
+        validate_values(
+            &values,
+            Config::MEDIA_WIKI_PAGE_NAME_PATTERN,
+            KaitaiError::BadJustSolve,
+        )?;
 
         Ok(JustSolve { value: values })
     }
@@ -162,14 +160,11 @@ struct LocIdentifier {
 impl LocIdentifier {
     fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
         // Check if all values match the loc identifier pattern
-        let regex = Regex::new(Config::LOC_IDENTIFIER_PATTERN)
-            .map_err(|_| KaitaiError::BadLocIdentifier)?;
-
-        for value in &values {
-            if !regex.is_match(value) {
-                return Err(KaitaiError::BadLocIdentifier);
-            }
-        }
+        validate_values(
+            &values,
+            Config::LOC_IDENTIFIER_PATTERN,
+            KaitaiError::BadLocIdentifier,
+        )?;
 
         Ok(LocIdentifier { value: values })
     }
@@ -188,14 +183,11 @@ struct MIMEType {
 impl MIMEType {
     fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
         // Check if all values match the MIME type pattern
-        let regex =
-            Regex::new(Config::MIME_TYPE_PATTERN).map_err(|_| KaitaiError::BadWikiPageName)?;
-
-        for value in &values {
-            if !regex.is_match(value) {
-                return Err(KaitaiError::BadWikiPageName);
-            }
-        }
+        validate_values(
+            &values,
+            Config::MIME_TYPE_PATTERN,
+            KaitaiError::BadWikiPageName,
+        )?;
 
         Ok(MIMEType { value: values })
     }
@@ -214,14 +206,11 @@ struct PronomIdentifier {
 impl PronomIdentifier {
     fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
         // Check if all values match the Pronom identifier pattern
-        let regex = Regex::new(Config::PRONOM_IDENTIFIER_PATTERN)
-            .map_err(|_| KaitaiError::BadPronomIdentifier)?;
-
-        for value in &values {
-            if !regex.is_match(value) {
-                return Err(KaitaiError::BadPronomIdentifier);
-            }
-        }
+        validate_values(
+            &values,
+            Config::PRONOM_IDENTIFIER_PATTERN,
+            KaitaiError::BadPronomIdentifier,
+        )?;
 
         Ok(PronomIdentifier { value: values })
     }
@@ -240,14 +229,11 @@ struct RFCIdentifier {
 impl RFCIdentifier {
     fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
         // Check if all values match the RFC identifier pattern
-        let regex = Regex::new(Config::RFC_IDENTIFIER_PATTERN)
-            .map_err(|_| KaitaiError::BadRFCIdentifier)?;
-
-        for value in &values {
-            if !regex.is_match(value) {
-                return Err(KaitaiError::BadRFCIdentifier);
-            }
-        }
+        validate_values(
+            &values,
+            Config::RFC_IDENTIFIER_PATTERN,
+            KaitaiError::BadRFCIdentifier,
+        )?;
 
         Ok(RFCIdentifier { value: values })
     }
@@ -266,14 +252,7 @@ struct WikiDataIdentifier {
 impl WikiDataIdentifier {
     fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
         // Check if all values match the WikiData identifier pattern
-        let regex = Regex::new(Config::WIKI_DATA_IDENTIFIER_PATTERN)
-            .map_err(|_| KaitaiError::BadWikiDataIdentifier)?;
-
-        for value in &values {
-            if !regex.is_match(value) {
-                return Err(KaitaiError::BadWikiDataIdentifier);
-            }
-        }
+        validate_values(&values, Config::IMPORT_PATTERN, KaitaiError::BadImport)?;
 
         Ok(WikiDataIdentifier { value: values })
     }
@@ -328,13 +307,7 @@ struct Imports {
 
 impl Imports {
     fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
-        let regex = Regex::new(Config::IMPORT_PATTERN).map_err(|_| KaitaiError::BadImport)?;
-
-        for value in &values {
-            if !regex.is_match(value) {
-                return Err(KaitaiError::BadImport);
-            }
-        }
+        validate_values(&values, Config::IMPORT_PATTERN, KaitaiError::BadImport)?;
 
         Ok(Imports { value: values })
     }

@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-#[derive(Debug, Error)]
+#[derive(Debug, Error, Clone)]
 pub enum KaitaiError {
     // Invalid meta section identifier
     #[error("Meta identifier is not valid")]
