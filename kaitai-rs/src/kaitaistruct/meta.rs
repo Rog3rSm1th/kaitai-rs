@@ -1,36 +1,38 @@
-// Import necessary modules and dependencies
 use crate::config::config::Config;
 use crate::errors::KaitaiError;
+use crate::kaitaistruct::kaitai_property::KaitaiProperty;
 use crate::utils::utils::validate_values;
 use regex::Regex;
 
 /// Meta struct, representing metadata
 pub struct Meta {
-    // identifier information
-    pub identifier: Identifier,
-    // title of the Kaitai Struct
-    pub title: String,
-    // file extension information
-    pub application: Application,
-    // cross-referencing details
-    pub file_extension: FileExtension,
-    // cross-referencing details
-    pub xref: XRef,
-    // license type
-    pub license: String,
+    // Identifier information
+    identifier: Identifier,
+    // Title of the Kaitai Struct
+    title: String,
+    // File extension information
+    application: Application,
+    // Cross-referencing details
+    file_extension: FileExtension,
+    // Cross-referencing details
+    xref: XRef,
+    // License type
+    license: String,
     // Kaitai Struct version
-    pub ks_version: KsVersion,
-    // boolean flag indicating whether KS opaque types are used
-    pub ks_debug: bool,
-    // boolean flag indicating whether KS opaque types are used
-    pub ks_opaque_types: bool,
-    // import information
-    pub imports: Imports,
-    // encoding used in the KS file
-    pub encoding: String,
-    // endian used in the KS (le/be)
-    pub endian: Endian,
+    ks_version: KsVersion,
+    // Boolean flag indicating whether KS opaque types are used
+    ks_debug: bool,
+    // Boolean flag indicating whether KS opaque types are used
+    ks_opaque_types: bool,
+    // Import information
+    imports: Imports,
+    // Encoding used in the KS file
+    encoding: String,
+    // Endian used in the KS (le/be)
+    endian: Endian,
 }
+
+impl KaitaiProperty for Meta {}
 
 // Identifier struct to represent identifier
 struct Identifier {

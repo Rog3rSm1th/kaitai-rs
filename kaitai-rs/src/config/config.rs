@@ -33,4 +33,7 @@ impl Config {
 
     // Regular expression patterns for imports
     pub const IMPORT_PATTERN: &'static str = concat!(r"^(.*/)?[a-z][a-z0-9_]*$");
+
+    // Enum name pattern
+    pub const ENUM_NAME_PATTERN: &'static str = concat!(r"^[a-z][a-z0-9_]*$");
 }

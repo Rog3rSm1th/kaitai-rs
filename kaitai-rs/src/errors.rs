@@ -30,11 +30,15 @@ pub enum KaitaiError {
     #[error("RFC identifier is not valid")]
     BadRFCIdentifier,
 
-    // Invalid RFC identifier
+    // Invalid wiki data identifier
     #[error("RFC identifier is not valid")]
     BadWikiDataIdentifier,
 
-    // Invalid RFC identifier
+    // Invalid import
     #[error("Import is not valid")]
     BadImport,
+
+    // Invalid enum name
+    #[error("Enum name is not valid")]
+    BadEnumName,
 }
