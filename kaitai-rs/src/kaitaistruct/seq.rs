@@ -2,6 +2,7 @@ use crate::kaitaistruct::attributes::Identifier;
 use crate::kaitaistruct::doc::Doc;
 use crate::kaitaistruct::doc_ref::DocRef;
 use crate::kaitaistruct::kaitai_property::KaitaiProperty;
+use crate::kaitaistruct::kaitai_type::Type;
 
 /// Seq property struct
 pub struct Seq {
@@ -14,7 +15,7 @@ struct SeqAttribute {
     doc_ref: DocRef,
     contents: Vec<String>,
     // TODO: implement type system
-    seq_type: String,
+    seq_type: Type,
     repeat: Repeat,
     repeat_expr: u32,
     // TODO: Implement the repeat_until parser & engine
