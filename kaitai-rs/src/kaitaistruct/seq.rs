@@ -5,6 +5,10 @@ use crate::kaitaistruct::kaitai_property::KaitaiProperty;
 
 /// Seq property struct
 pub struct Seq {
+    attributes: Vec<SeqAttribute>,
+}
+
+struct SeqAttribute {
     id: Identifier,
     doc: Doc,
     doc_ref: DocRef,
