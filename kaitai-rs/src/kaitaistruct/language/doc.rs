@@ -1,4 +1,4 @@
-use crate::kaitaistruct::kaitai_property::KaitaiProperty;
+use crate::kaitaistruct::language::kaitai_property::KaitaiProperty;
 
 /// Doc property struct
 pub struct Doc {

@@ -1,7 +1,7 @@
 use crate::config::config::Config;
 use crate::errors::KaitaiError;
-use crate::kaitaistruct::identifier::Identifier;
-use crate::kaitaistruct::kaitai_property::KaitaiProperty;
+use crate::kaitaistruct::language::identifier::Identifier;
+use crate::kaitaistruct::language::kaitai_property::KaitaiProperty;
 use crate::utils::utils::validate_values;
 use regex::Regex;
 

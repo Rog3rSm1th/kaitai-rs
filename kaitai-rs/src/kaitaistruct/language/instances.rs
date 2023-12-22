@@ -1,7 +1,7 @@
-use crate::kaitaistruct::attribute::Attribute;
-use crate::kaitaistruct::identifier::Identifier;
-use crate::kaitaistruct::kaitai_property::KaitaiProperty;
-use crate::kaitaistruct::params::Params;
+use crate::kaitaistruct::language::attribute::Attribute;
+use crate::kaitaistruct::language::identifier::Identifier;
+use crate::kaitaistruct::language::kaitai_property::KaitaiProperty;
+use crate::kaitaistruct::language::params::Params;
 use std::collections::HashMap;
 
 /// Instances struct representing a collection of instances

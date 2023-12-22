@@ -1,11 +1,11 @@
-use crate::kaitaistruct::doc::Doc;
-use crate::kaitaistruct::doc_ref::DocRef;
-use crate::kaitaistruct::enums::Enums;
-use crate::kaitaistruct::identifier::Identifier;
-use crate::kaitaistruct::kaitai_property::KaitaiProperty;
-use crate::kaitaistruct::meta::Meta;
-use crate::kaitaistruct::params::Params;
-use crate::kaitaistruct::seq::Seq;
+use crate::kaitaistruct::language::doc::Doc;
+use crate::kaitaistruct::language::doc_ref::DocRef;
+use crate::kaitaistruct::language::enums::Enums;
+use crate::kaitaistruct::language::identifier::Identifier;
+use crate::kaitaistruct::language::kaitai_property::KaitaiProperty;
+use crate::kaitaistruct::language::meta::Meta;
+use crate::kaitaistruct::language::params::Params;
+use crate::kaitaistruct::language::seq::Seq;
 use std::collections::HashMap;
 
 /// Types struct representing a collection of type specifications

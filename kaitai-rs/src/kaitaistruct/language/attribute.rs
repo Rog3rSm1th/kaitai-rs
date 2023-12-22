@@ -1,8 +1,8 @@
-use crate::kaitaistruct::doc::Doc;
-use crate::kaitaistruct::doc_ref::DocRef;
-use crate::kaitaistruct::enums::Enum;
-use crate::kaitaistruct::identifier::Identifier;
-use crate::kaitaistruct::kaitai_type::Type;
+use crate::kaitaistruct::language::doc::Doc;
+use crate::kaitaistruct::language::doc_ref::DocRef;
+use crate::kaitaistruct::language::enums::Enum;
+use crate::kaitaistruct::language::identifier::Identifier;
+use crate::kaitaistruct::language::kaitai_type::Type;
 
 // Attribute struct definition
 pub struct Attribute {
