@@ -1,4 +1,4 @@
-// All existing types
+// Enumeration representing all existing types
 enum PureType {
     UnsignedInteger,
     SignedInteger,
@@ -15,7 +15,7 @@ enum PureType {
 
 // Type structure
 pub struct Type {
-    // Pure type
+    // The pure type associated with the Type instance
     pure_type: PureType,
     // Indicates whether the type is an array
     is_array: bool,

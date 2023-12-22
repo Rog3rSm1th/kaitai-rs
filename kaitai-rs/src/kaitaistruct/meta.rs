@@ -1,11 +1,11 @@
 use crate::config::config::Config;
 use crate::errors::KaitaiError;
-use crate::kaitaistruct::attributes::Identifier;
+use crate::kaitaistruct::identifier::Identifier;
 use crate::kaitaistruct::kaitai_property::KaitaiProperty;
 use crate::utils::utils::validate_values;
 use regex::Regex;
 
-/// Meta struct, representing metadata
+// Meta struct, representing metadata
 pub struct Meta {
     // Identifier information
     identifier: Identifier,
@@ -20,8 +20,8 @@ pub struct Meta {
     // License type
     license: String,
     // Kaitai Struct version
-    ks_version: KsVersion,
-    // Boolean flag indicating whether KS opaque types are used
+    ks_version: f64,
+    // Boolean flag indicating whether KS debug mode is enabled
     ks_debug: bool,
     // Boolean flag indicating whether KS opaque types are used
     ks_opaque_types: bool,
@@ -253,25 +253,6 @@ struct XRef {
     pronom: PronomIdentifier,
     rfc: RFCIdentifier,
     wikidata: WikiDataIdentifier,
-}
-
-// KsVersion struct to represent Kaitai Struct version information
-pub struct KsVersion {
-    value: KsVersionValue,
-}
-
-impl KsVersion {
-    pub fn new(value: KsVersionValue) -> KsVersion {
-        KsVersion { value }
-    }
-
-    // Method to convert KsVersion to a string
-    pub fn as_string(&self) -> String {
-        match &self.value {
-            KsVersionValue::String(version_str) => version_str.clone(),
-            KsVersionValue::Number(version_num) => version_num.to_string(),
-        }
-    }
 }
 
 // Enum to represent the possible types of KsVersion

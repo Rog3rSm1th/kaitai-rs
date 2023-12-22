@@ -2,8 +2,9 @@ use crate::config::config::Config;
 use crate::errors::KaitaiError;
 use crate::utils::utils::validate_values;
 
-// Identifier struct to represent identifier
+// Identifier struct to represent an identifier
 pub struct Identifier {
+    // Vector containing identifier values
     value: Vec<String>,
 }
 

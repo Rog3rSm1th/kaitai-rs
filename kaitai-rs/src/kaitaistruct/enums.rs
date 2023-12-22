@@ -1,5 +1,6 @@
 use crate::config::config::Config;
 use crate::errors::KaitaiError;
+use crate::kaitaistruct::identifier::Identifier;
 use crate::kaitaistruct::kaitai_property::KaitaiProperty;
 use crate::utils::utils::validate_values;
 use regex::Regex;
@@ -7,13 +8,14 @@ use std::collections::HashMap;
 
 /// Enums property struct
 pub struct Enums {
-    // List of the existing enums
-    pub enums: Vec<Enum>,
+    // Hashmap of the existing enums
+    pub enums_specs: HashMap<Identifier, Enum>,
 }
 
+// Implementation of the KaitaiProperty trait for Enums
 impl KaitaiProperty for Enums {}
 
-// Enum struct
+// Enum struct definition
 pub struct Enum {
     // Name of the enum
     pub name: String,
