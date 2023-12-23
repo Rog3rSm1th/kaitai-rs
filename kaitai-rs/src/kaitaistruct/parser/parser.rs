@@ -2,16 +2,19 @@ use serde_yaml::Value;
 use std::fs::File;
 use std::io::{self, Read};
 use crate::kaitaistruct::language::doc::Doc;
+use crate::kaitaistruct::language::doc_ref::DocRef;
 
 // KsyParser struct to handle parsing logic
 pub struct KsyParser {
     pub doc_instance: Doc,
+    pub doc_ref_instance: DocRef,
 }
 
 impl KsyParser {
     pub fn new() -> Self {
         KsyParser {
             doc_instance: Doc::new(),
+            doc_ref_instance: DocRef::new(),
         }
     }
 
@@ -52,7 +55,7 @@ impl KsyParser {
 
                 // Process the "doc_ref" section
                 if let Some(doc_ref) = map.get(&Value::String("doc-ref".to_string())) {
-                    // KsyParser::parse_doc_ref(doc_ref)?;
+                    self.parse_doc_ref(doc_ref)?;
                 }
 
                 // Process the "params" section
@@ -103,8 +106,42 @@ impl KsyParser {
         Ok(())
     }
 
-    /// Prints the content of the doc_instance
+    /// Parses the "doc_ref" section and returns a DocRef instance.
+    fn parse_doc_ref(&mut self, doc_ref: &Value) -> Result<(), io::Error> {
+        match doc_ref {
+            // Handle a single string in "doc_ref" section
+            Value::String(url) => {
+                println!("{}", url);
+                self.doc_ref_instance.add_docref(url).unwrap();
+            }
+            // Handle a list of strings in "doc_ref" section
+            Value::Sequence(urls) => {
+                for url_value in urls {
+                    if let Value::String(url) = url_value {
+                        self.doc_ref_instance.add_docref(url).unwrap();
+                    } else {
+                        return Err(io::Error::new(
+                            io::ErrorKind::InvalidData,
+                            "Invalid data in 'doc_ref' section",
+                        ));
+                    }
+                }
+            }
+            _ => {
+                // Handle unexpected data in "doc_ref" section
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidData,
+                    "Unexpected data in 'doc_ref' section",
+                ));
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Prints the Ksy sections
     pub fn print_struct(&self) {
         println!("{:#?}", self.doc_instance);
+        println!("{:#?}", self.doc_ref_instance);
     }
 }

@@ -1,8 +1,6 @@
 pub struct Config;
 
 impl Config {
-    /// Meta Identifiers
-
     // Regular expression patterns for identifiers
     pub const IDENTIFIER_PATTERN: &'static str = concat!(r"^[a-z][a-z0-9_]*$");
 
@@ -43,4 +41,10 @@ impl Config {
 
     // Process pattern
     pub const PROCESS_PATTERN: &'static str = concat!(r"^zlib|(xor|rol|ror)\(.*\)$");
+
+    // DocRef Pattern (url + space + arbitrary string)
+    pub const DOCREF_PATTERN: &'static str = concat!(
+        r"^(?P<URL>https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*))",
+        r"(( +)?(?P<arbitrary_string>.+))?"
+    );
 }

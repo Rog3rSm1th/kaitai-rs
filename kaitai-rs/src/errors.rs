@@ -41,4 +41,8 @@ pub enum KaitaiError {
     // Invalid enum name
     #[error("Enum name is not valid")]
     BadEnumName,
+
+    // Invalid DocRef
+    #[error("doc-ref section is not valid")]
+    BadDocRef,
 }
