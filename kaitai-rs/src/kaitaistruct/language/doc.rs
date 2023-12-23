@@ -1,9 +1,19 @@
 use crate::kaitaistruct::language::kaitai_property::KaitaiProperty;
 
 /// Doc property struct
+#[derive(Debug)]
 pub struct Doc {
-    // description of the Kaitai struct
+    // Description of the Kaitai struct
     pub description: Option<String>,
 }
 
-impl KaitaiProperty for Doc {}
+impl Doc {
+    pub fn new() -> Self {
+        Doc { description: None }
+    }
+
+    // Sets the Doc description
+    pub fn set_description(&mut self, description: Option<String>) {
+        self.description = description;
+    }
+}

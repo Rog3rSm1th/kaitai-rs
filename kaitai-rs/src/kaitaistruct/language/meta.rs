@@ -3,7 +3,6 @@ use crate::errors::KaitaiError;
 use crate::kaitaistruct::language::identifier::Identifier;
 use crate::kaitaistruct::language::kaitai_property::KaitaiProperty;
 use crate::utils::utils::validate_values;
-use regex::Regex;
 
 // Meta struct, representing metadata
 pub struct Meta {

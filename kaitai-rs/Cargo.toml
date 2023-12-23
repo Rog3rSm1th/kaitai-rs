@@ -7,4 +7,6 @@ edition = "2021"
 
 [dependencies]
 regex = "1.10.2"
+serde = "1.0.193"
+serde_yaml = "0.9.29"
 thiserror = "1.0.51"
