@@ -5,9 +5,7 @@ fn main() {
     let mut parser = KsyParser::new();
 
     // Parse YAML file
-    if let Ok(yaml_value) =
-        parser.parse_yaml("../kaitai_struct_formats/archive/android_bootldr_asus.ksy")
-    {
+    if let Ok(yaml_value) = parser.parse_yaml("../kaitai_struct_formats/hardware/dtb.ksy") {
         // Print the content of the doc_instance
         parser.print_struct();
     } else {

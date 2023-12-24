@@ -1,36 +1,40 @@
 use crate::config::config::Config;
 use crate::errors::KaitaiError;
-use crate::kaitaistruct::language::identifier::Identifier;
-use crate::kaitaistruct::language::kaitai_property::KaitaiProperty;
 use crate::utils::utils::validate_values;
+use crate::kaitaistruct::language::identifier::Identifier;
 use std::collections::HashMap;
+use std::io;
 
-/// Enums property struct
+// Enums property struct
+#[derive(Debug)]
 pub struct Enums {
     // Hashmap of the existing enums
     pub enums_specs: HashMap<Identifier, Enum>,
 }
 
-// Implementation of the KaitaiProperty trait for Enums
-impl KaitaiProperty for Enums {}
+impl Enums {
+    pub fn new() -> Self {
+        Enums {
+            enums_specs: HashMap::new(),
+        }
+    }
+
+    // Adds an Enum to the Enums instance
+    pub fn add_enum(&mut self, identifier: Identifier, enum_instance: Enum) -> Result<(), io::Error> {
+        self.enums_specs.insert(identifier, enum_instance);
+        Ok(())
+    }
+}
 
 // Enum struct definition
+#[derive(Debug)]
 pub struct Enum {
-    // Name of the enum
-    pub name: String,
     // Enum possible values
-    pub values: HashMap<String, String>,
+    pub values: HashMap<u32, String>,
 }
 
 impl Enum {
-    pub fn new(name: String, values: HashMap<String, String>) -> Result<Self, KaitaiError> {
-        // Check if all values match the identifier pattern
-        validate_values(
-            &[name.clone()],
-            Config::ENUM_NAME_PATTERN,
-            KaitaiError::BadEnumName,
-        )?;
-
-        Ok(Enum { name, values })
+    pub fn new(values: HashMap<u32, String>) -> Result<Self, KaitaiError> {
+        Ok(Enum { values })
     }
 }
