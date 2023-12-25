@@ -1,7 +1,7 @@
-use regex::Regex;
-use crate::kaitaistruct::language::kaitai_property::KaitaiProperty;
 use crate::config::config::Config;
 use crate::errors::KaitaiError;
+use crate::kaitaistruct::language::kaitai_property::KaitaiProperty;
+use regex::Regex;
 
 /// DocRef property struct
 #[derive(Debug)]
@@ -20,7 +20,9 @@ pub struct DocRefElement {
 
 impl DocRef {
     pub fn new() -> Self {
-        DocRef { content: Vec::new() }
+        DocRef {
+            content: Vec::new(),
+        }
     }
 
     /// Adds a DocRefElement to the content vector with the specified URL.
@@ -30,7 +32,9 @@ impl DocRef {
 
         if let Some(captures) = docref_pattern.captures(url) {
             let url_part = captures.name("URL").map(|m| m.as_str().to_string());
-            let arbitrary_part = captures.name("arbitrary_string").map(|m| m.as_str().to_string());
+            let arbitrary_part = captures
+                .name("arbitrary_string")
+                .map(|m| m.as_str().to_string());
 
             self.content.push(DocRefElement {
                 url: url_part,

@@ -1,18 +1,21 @@
-use serde_yaml::Value;
-use std::fs::File;
-use std::io::{self, Read};
 use crate::kaitaistruct::language::doc::Doc;
 use crate::kaitaistruct::language::doc_ref::DocRef;
+use crate::kaitaistruct::language::enums::Enum;
 use crate::kaitaistruct::language::enums::Enums;
 use crate::kaitaistruct::language::identifier::Identifier;
-use crate::kaitaistruct::language::enums::Enum;
+use crate::kaitaistruct::parser::doc::parse_doc;
+use crate::kaitaistruct::parser::doc_ref::parse_doc_ref;
+use crate::kaitaistruct::parser::enums::parse_enums;
+use serde_yaml::Value;
 use std::collections::HashMap;
+use std::fs::File;
+use std::io::{self, Read};
 
 // KsyParser struct to handle parsing logic
 pub struct KsyParser {
     pub doc_instance: Doc,
     pub doc_ref_instance: DocRef,
-    pub enums_instance: Enums
+    pub enums_instance: Enums,
 }
 
 impl KsyParser {
@@ -20,7 +23,7 @@ impl KsyParser {
         KsyParser {
             doc_instance: Doc::new(),
             doc_ref_instance: DocRef::new(),
-            enums_instance: Enums::new()
+            enums_instance: Enums::new(),
         }
     }
 
@@ -56,12 +59,12 @@ impl KsyParser {
 
                 // Process the "doc" section
                 if let Some(doc) = map.get(&Value::String("doc".to_string())) {
-                    self.parse_doc(doc)?;
+                    parse_doc(&mut self.doc_instance, doc)?;
                 }
 
                 // Process the "doc_ref" section
                 if let Some(doc_ref) = map.get(&Value::String("doc-ref".to_string())) {
-                    self.parse_doc_ref(doc_ref)?;
+                    parse_doc_ref(&mut self.doc_ref_instance, doc_ref)?;
                 }
 
                 // Process the "params" section
@@ -86,7 +89,7 @@ impl KsyParser {
 
                 // Process the "enums" section
                 if let Some(enums) = map.get(&Value::String("enums".to_string())) {
-                    self.parse_enums(enums)?;
+                    parse_enums(&mut self.enums_instance, enums)?;
                 }
             }
             _ => {
@@ -98,112 +101,6 @@ impl KsyParser {
             }
         }
 
-        Ok(())
-    }
-
-    /// Parses the "doc" section
-    fn parse_doc(&mut self, doc: &Value) -> Result<(), io::Error> {
-        // Extract the description from the "doc" section
-        let description = doc.as_str().map(|s| s.to_string());
-
-        // Set the description in the Doc instance
-        self.doc_instance.set_description(description);
-
-        Ok(())
-    }
-
-    /// Parses the "doc_ref" section
-    fn parse_doc_ref(&mut self, doc_ref: &Value) -> Result<(), io::Error> {
-        match doc_ref {
-            // Handle a single string in "doc_ref" section
-            Value::String(url) => {
-                println!("{}", url);
-                self.doc_ref_instance.add_docref(url).unwrap();
-            }
-            // Handle a list of strings in "doc_ref" section
-            Value::Sequence(urls) => {
-                for url_value in urls {
-                    if let Value::String(url) = url_value {
-                        self.doc_ref_instance.add_docref(url).unwrap();
-                    } else {
-                        return Err(io::Error::new(
-                            io::ErrorKind::InvalidData,
-                            "Invalid data in 'doc_ref' section",
-                        ));
-                    }
-                }
-            }
-            _ => {
-                // Handle unexpected data in "doc_ref" section
-                return Err(io::Error::new(
-                    io::ErrorKind::InvalidData,
-                    "Unexpected data in 'doc_ref' section",
-                ));
-            }
-        }
-
-        Ok(())
-    }
-
-    /// Parses the "enums" section
-    fn parse_enums(&mut self, enums_section: &Value) -> Result<(), io::Error> {
-        match enums_section {
-            Value::Mapping(enums_map) => {
-                for (enum_name, enum_values) in enums_map {
-                    if let Value::Mapping(variant_map) = enum_values {
-                        // Create an Identifier for the Enum
-                        let enum_identifier =
-                            Identifier::new(vec![enum_name.as_str().unwrap().to_string()])
-                                .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e.to_string()))?;
-    
-                        // Create an Enum instance
-                        let mut enum_instance = Enum {
-                            values: HashMap::new(),
-                        };
-    
-                        for (variant_value, variant_name) in variant_map {
-                            if let (Value::Number(value), Value::String(description)) =
-                                (variant_value, variant_name)
-                            {
-                                // Extract the variant value as u32
-                                let variant_value = value.as_u64().ok_or_else(|| {
-                                    io::Error::new(
-                                        io::ErrorKind::InvalidData,
-                                        "Variant value is not a valid u32",
-                                    )
-                                })? as u32;
-    
-                                // Insert the variant into the Enum's values HashMap
-                                enum_instance.values.insert(variant_value, description.to_string());
-                            } else {
-                                // Handle unexpected data in enum variant
-                                return Err(io::Error::new(
-                                    io::ErrorKind::InvalidData,
-                                    "Unexpected data in enum variant",
-                                ));
-                            }
-                        }
-    
-                        // Validate the enum name and add it to Enums
-                        self.enums_instance.add_enum(enum_identifier, enum_instance)?;
-                    } else {
-                        // Handle unexpected data in enum section
-                        return Err(io::Error::new(
-                            io::ErrorKind::InvalidData,
-                            "Unexpected data in enum section",
-                        ));
-                    }
-                }
-            }
-            _ => {
-                // Handle unexpected YAML structure
-                return Err(io::Error::new(
-                    io::ErrorKind::InvalidData,
-                    "Unexpected YAML structure in enums section",
-                ));
-            }
-        }
-    
         Ok(())
     }
 
