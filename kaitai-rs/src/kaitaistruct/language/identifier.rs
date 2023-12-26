@@ -1,6 +1,6 @@
 use crate::config::config::Config;
-use crate::errors::KaitaiError;
 use crate::utils::utils::validate_values;
+use std::io;
 
 // Identifier struct to represent an identifier
 #[derive(Eq, Hash, PartialEq, Debug)]
@@ -10,13 +10,9 @@ pub struct Identifier {
 }
 
 impl Identifier {
-    pub fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
+    pub fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the identifier pattern
-        validate_values(
-            &values,
-            Config::IDENTIFIER_PATTERN,
-            KaitaiError::BadMetaIdentifier,
-        )?;
+        validate_values(&values, Config::IDENTIFIER_PATTERN);
 
         Ok(Identifier { value: values })
     }
@@ -27,7 +23,7 @@ impl Identifier {
     }
 
     // Create an Identifier instance from a string
-    pub fn from_string(identifier: &str) -> Result<Self, KaitaiError> {
+    pub fn from_string(identifier: &str) -> Result<Self, io::Error> {
         let values: Vec<String> = identifier.split('.').map(String::from).collect();
         Identifier::new(values)
     }

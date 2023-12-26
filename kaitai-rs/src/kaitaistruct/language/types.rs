@@ -2,7 +2,6 @@ use crate::kaitaistruct::language::doc::Doc;
 use crate::kaitaistruct::language::doc_ref::DocRef;
 use crate::kaitaistruct::language::enums::Enums;
 use crate::kaitaistruct::language::identifier::Identifier;
-use crate::kaitaistruct::language::kaitai_property::KaitaiProperty;
 use crate::kaitaistruct::language::meta::Meta;
 use crate::kaitaistruct::language::params::Params;
 use crate::kaitaistruct::language::seq::Seq;
@@ -34,4 +33,4 @@ struct TypeSpec {
     doc_ref: DocRef,
 }
 
-impl KaitaiProperty for Types {}
+impl Types {}

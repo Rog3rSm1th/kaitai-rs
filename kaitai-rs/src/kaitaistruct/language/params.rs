@@ -2,7 +2,6 @@ use crate::kaitaistruct::language::doc::Doc;
 use crate::kaitaistruct::language::doc_ref::DocRef;
 use crate::kaitaistruct::language::enums::Enum;
 use crate::kaitaistruct::language::identifier::Identifier;
-use crate::kaitaistruct::language::kaitai_property::KaitaiProperty;
 
 /// Params struct representing a list of params specifications
 pub struct Params {
@@ -10,7 +9,7 @@ pub struct Params {
     params_spec: Vec<ParamSpec>,
 }
 
-impl KaitaiProperty for Params {}
+impl Params {}
 
 // ParamSpec struct representing a parameter specification
 pub struct ParamSpec {

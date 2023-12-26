@@ -1,40 +1,59 @@
 use crate::config::config::Config;
-use crate::errors::KaitaiError;
 use crate::kaitaistruct::language::identifier::Identifier;
-use crate::kaitaistruct::language::kaitai_property::KaitaiProperty;
 use crate::utils::utils::validate_values;
+use std::io;
 
 // Meta struct, representing metadata
+#[derive(Debug)]
 pub struct Meta {
     // Identifier information
-    identifier: Identifier,
+    identifier: Option<Identifier>,
     // Title of the Kaitai Struct
-    title: String,
+    title: Option<String>,
     // File extension information
-    application: Application,
+    application: Option<Application>,
     // Cross-referencing details
-    file_extension: FileExtension,
+    file_extension: Option<FileExtension>,
     // Cross-referencing details
-    xref: XRef,
+    xref: Option<XRef>,
     // License type
-    license: String,
+    license: Option<String>,
     // Kaitai Struct version
-    ks_version: f64,
+    ks_version: Option<f64>,
     // Boolean flag indicating whether KS debug mode is enabled
-    ks_debug: bool,
+    ks_debug: Option<bool>,
     // Boolean flag indicating whether KS opaque types are used
-    ks_opaque_types: bool,
+    ks_opaque_types: Option<bool>,
     // Import information
-    imports: Imports,
+    imports: Option<Imports>,
     // Encoding used in the KS file
-    encoding: String,
+    encoding: Option<String>,
     // Endian used in the KS (le/be)
-    endian: Endian,
+    endian: Option<Endian>,
 }
 
-impl KaitaiProperty for Meta {}
+impl Meta {
+    // Constructor for Meta struct with all fields set to None
+    pub fn new() -> Self {
+        Meta {
+            identifier: None,
+            title: None,
+            application: None,
+            file_extension: None,
+            xref: None,
+            license: None,
+            ks_version: None,
+            ks_debug: None,
+            ks_opaque_types: None,
+            imports: None,
+            encoding: None,
+            endian: None,
+        }
+    }
+}
 
 // Application struct to represent application information
+#[derive(Debug)]
 struct Application {
     values: Vec<String>,
 }
@@ -51,6 +70,7 @@ impl Application {
 }
 
 // Define the FileExtension struct to represent file extension information
+#[derive(Debug)]
 struct FileExtension {
     values: Vec<String>,
 }
@@ -67,18 +87,15 @@ impl FileExtension {
 }
 
 // ForensicWiki struct to represent ForensicWiki information
+#[derive(Debug)]
 struct ForensicWiki {
     value: Vec<String>,
 }
 
 impl ForensicWiki {
-    fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
+    fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the media wiki page pattern
-        validate_values(
-            &values,
-            Config::MEDIA_WIKI_PAGE_NAME_PATTERN,
-            KaitaiError::BadWikiPageName,
-        )?;
+        validate_values(&values, Config::MEDIA_WIKI_PAGE_NAME_PATTERN);
 
         Ok(ForensicWiki { value: values })
     }
@@ -90,14 +107,15 @@ impl ForensicWiki {
 }
 
 // ISO struct to represent ISO information
+#[derive(Debug)]
 struct ISO {
     value: Vec<String>,
 }
 
 impl ISO {
-    fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
+    fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the ISO pattern
-        validate_values(&values, Config::ISO_IDENTIFIER_PATTERN, KaitaiError::BadISO)?;
+        validate_values(&values, Config::ISO_IDENTIFIER_PATTERN);
 
         Ok(ISO { value: values })
     }
@@ -109,18 +127,15 @@ impl ISO {
 }
 
 // JustSolve struct to represent JustSolve information
+#[derive(Debug)]
 struct JustSolve {
     value: Vec<String>,
 }
 
 impl JustSolve {
-    fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
+    fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the media wiki page pattern
-        validate_values(
-            &values,
-            Config::MEDIA_WIKI_PAGE_NAME_PATTERN,
-            KaitaiError::BadJustSolve,
-        )?;
+        validate_values(&values, Config::MEDIA_WIKI_PAGE_NAME_PATTERN);
 
         Ok(JustSolve { value: values })
     }
@@ -132,18 +147,15 @@ impl JustSolve {
 }
 
 // LocIdentifier struct to represent LocIdentifier information
+#[derive(Debug)]
 struct LocIdentifier {
     value: Vec<String>,
 }
 
 impl LocIdentifier {
-    fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
+    fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the loc identifier pattern
-        validate_values(
-            &values,
-            Config::LOC_IDENTIFIER_PATTERN,
-            KaitaiError::BadLocIdentifier,
-        )?;
+        validate_values(&values, Config::LOC_IDENTIFIER_PATTERN);
 
         Ok(LocIdentifier { value: values })
     }
@@ -155,18 +167,15 @@ impl LocIdentifier {
 }
 
 // MIMEType struct to represent MIMEType information
+#[derive(Debug)]
 struct MIMEType {
     value: Vec<String>,
 }
 
 impl MIMEType {
-    fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
+    fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the MIME type pattern
-        validate_values(
-            &values,
-            Config::MIME_TYPE_PATTERN,
-            KaitaiError::BadWikiPageName,
-        )?;
+        validate_values(&values, Config::MIME_TYPE_PATTERN);
 
         Ok(MIMEType { value: values })
     }
@@ -178,18 +187,15 @@ impl MIMEType {
 }
 
 // PronomIdentifier struct to represent PronomIdentifier information
+#[derive(Debug)]
 struct PronomIdentifier {
     value: Vec<String>,
 }
 
 impl PronomIdentifier {
-    fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
+    fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the Pronom identifier pattern
-        validate_values(
-            &values,
-            Config::PRONOM_IDENTIFIER_PATTERN,
-            KaitaiError::BadPronomIdentifier,
-        )?;
+        validate_values(&values, Config::PRONOM_IDENTIFIER_PATTERN);
 
         Ok(PronomIdentifier { value: values })
     }
@@ -201,18 +207,15 @@ impl PronomIdentifier {
 }
 
 // RFCIdentifier struct to represent RFCIdentifier information
+#[derive(Debug)]
 struct RFCIdentifier {
     value: Vec<String>,
 }
 
 impl RFCIdentifier {
-    fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
+    fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the RFC identifier pattern
-        validate_values(
-            &values,
-            Config::RFC_IDENTIFIER_PATTERN,
-            KaitaiError::BadRFCIdentifier,
-        )?;
+        validate_values(&values, Config::RFC_IDENTIFIER_PATTERN);
 
         Ok(RFCIdentifier { value: values })
     }
@@ -224,14 +227,15 @@ impl RFCIdentifier {
 }
 
 // WikiDataIdentifier struct to represent WikiDataIdentifier information
+#[derive(Debug)]
 struct WikiDataIdentifier {
     value: Vec<String>,
 }
 
 impl WikiDataIdentifier {
-    fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
+    fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the WikiData identifier pattern
-        validate_values(&values, Config::IMPORT_PATTERN, KaitaiError::BadImport)?;
+        validate_values(&values, Config::IMPORT_PATTERN);
 
         Ok(WikiDataIdentifier { value: values })
     }
@@ -243,6 +247,7 @@ impl WikiDataIdentifier {
 }
 
 // XRef struct to represent cross-referencing information
+#[derive(Debug)]
 struct XRef {
     forensic_wiki: ForensicWiki,
     iso: ISO,
@@ -255,19 +260,21 @@ struct XRef {
 }
 
 // Enum to represent the possible types of KsVersion
+#[derive(Debug)]
 pub enum KsVersionValue {
     String(String),
     Number(u64),
 }
 
 // Imports struct to represent import information
+#[derive(Debug)]
 struct Imports {
     value: Vec<String>,
 }
 
 impl Imports {
-    fn new(values: Vec<String>) -> Result<Self, KaitaiError> {
-        validate_values(&values, Config::IMPORT_PATTERN, KaitaiError::BadImport)?;
+    fn new(values: Vec<String>) -> Result<Self, io::Error> {
+        validate_values(&values, Config::IMPORT_PATTERN);
 
         Ok(Imports { value: values })
     }
@@ -279,12 +286,14 @@ impl Imports {
 }
 
 // Enum to represent the possible endian types
+#[derive(Debug)]
 pub enum EndianEnum {
     Le,
     Be,
 }
 
 // Enum to represent various scalar types
+#[derive(Debug)]
 pub enum AnyScalar {
     Str(String),
     Number(f64),
@@ -294,6 +303,7 @@ pub enum AnyScalar {
 }
 
 // Define the Endian struct to represent endian information
+#[derive(Debug)]
 pub struct Endian {
     switch_on: AnyScalar,
     endian: EndianEnum,

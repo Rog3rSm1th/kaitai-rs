@@ -3,9 +3,11 @@ use crate::kaitaistruct::language::doc_ref::DocRef;
 use crate::kaitaistruct::language::enums::Enum;
 use crate::kaitaistruct::language::enums::Enums;
 use crate::kaitaistruct::language::identifier::Identifier;
+use crate::kaitaistruct::language::meta::Meta;
 use crate::kaitaistruct::parser::doc::parse_doc;
 use crate::kaitaistruct::parser::doc_ref::parse_doc_ref;
 use crate::kaitaistruct::parser::enums::parse_enums;
+use crate::kaitaistruct::parser::meta::parse_meta;
 use serde_yaml::Value;
 use std::collections::HashMap;
 use std::fs::File;
@@ -13,17 +15,19 @@ use std::io::{self, Read};
 
 // KsyParser struct to handle parsing logic
 pub struct KsyParser {
-    pub doc_instance: Doc,
-    pub doc_ref_instance: DocRef,
-    pub enums_instance: Enums,
+    pub doc: Doc,
+    pub doc_ref: DocRef,
+    pub enums: Enums,
+    pub meta: Meta,
 }
 
 impl KsyParser {
     pub fn new() -> Self {
         KsyParser {
-            doc_instance: Doc::new(),
-            doc_ref_instance: DocRef::new(),
-            enums_instance: Enums::new(),
+            doc: Doc::new(),
+            doc_ref: DocRef::new(),
+            enums: Enums::new(),
+            meta: Meta::new(),
         }
     }
 
@@ -54,17 +58,17 @@ impl KsyParser {
             Value::Mapping(map) => {
                 // Process the "meta" section
                 if let Some(meta) = map.get(&Value::String("meta".to_string())) {
-                    // TODO: Implement processing for "meta"
+                    parse_meta(&mut self.meta, meta).unwrap();
                 }
 
                 // Process the "doc" section
                 if let Some(doc) = map.get(&Value::String("doc".to_string())) {
-                    parse_doc(&mut self.doc_instance, doc)?;
+                    parse_doc(&mut self.doc, doc).unwrap();
                 }
 
                 // Process the "doc_ref" section
                 if let Some(doc_ref) = map.get(&Value::String("doc-ref".to_string())) {
-                    parse_doc_ref(&mut self.doc_ref_instance, doc_ref)?;
+                    parse_doc_ref(&mut self.doc_ref, doc_ref).unwrap();
                 }
 
                 // Process the "params" section
@@ -89,7 +93,7 @@ impl KsyParser {
 
                 // Process the "enums" section
                 if let Some(enums) = map.get(&Value::String("enums".to_string())) {
-                    parse_enums(&mut self.enums_instance, enums)?;
+                    parse_enums(&mut self.enums, enums).unwrap();
                 }
             }
             _ => {
@@ -106,8 +110,9 @@ impl KsyParser {
 
     /// Prints the Ksy sections
     pub fn print_struct(&self) {
-        println!("{:#?}", self.doc_instance);
-        println!("{:#?}", self.doc_ref_instance);
-        println!("{:#?}", self.enums_instance);
+        println!("{:#?}", self.doc);
+        println!("{:#?}", self.doc_ref);
+        println!("{:#?}", self.enums);
+        println!("{:#?}", self.meta);
     }
 }
