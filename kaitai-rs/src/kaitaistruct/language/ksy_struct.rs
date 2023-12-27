@@ -8,6 +8,7 @@ use crate::kaitaistruct::language::seq::Seq;
 use crate::kaitaistruct::language::types::Types;
 
 // KsyStruct struct representing the overall structure of a KSY file
+#[allow(dead_code)]
 pub struct KsyStruct {
     // Metadata
     meta: Meta,

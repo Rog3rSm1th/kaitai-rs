@@ -1,4 +1,5 @@
 // Enumeration representing all existing types
+#[allow(dead_code)]
 enum PureType {
     UnsignedInteger,
     SignedInteger,
@@ -14,6 +15,7 @@ enum PureType {
 }
 
 // Type structure
+#[allow(dead_code)]
 pub struct Type {
     // The pure type associated with the Type instance
     pure_type: PureType,

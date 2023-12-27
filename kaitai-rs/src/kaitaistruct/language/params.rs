@@ -4,6 +4,7 @@ use crate::kaitaistruct::language::enums::Enum;
 use crate::kaitaistruct::language::identifier::Identifier;
 
 /// Params struct representing a list of params specifications
+#[allow(dead_code)]
 pub struct Params {
     // List of params spec
     params_spec: Vec<ParamSpec>,
@@ -12,6 +13,7 @@ pub struct Params {
 impl Params {}
 
 // ParamSpec struct representing a parameter specification
+#[allow(dead_code)]
 pub struct ParamSpec {
     // Identifier for the parameter
     id: Identifier,

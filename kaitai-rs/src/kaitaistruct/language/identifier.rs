@@ -12,12 +12,13 @@ pub struct Identifier {
 impl Identifier {
     pub fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the identifier pattern
-        validate_values(&values, Config::IDENTIFIER_PATTERN);
+        validate_values(&values, Config::IDENTIFIER_PATTERN).unwrap();
 
         Ok(Identifier { value: values })
     }
 
     // Getter method to retrieve identifier values
+    #[allow(dead_code)]
     fn get_values(&self) -> &Vec<String> {
         &self.value
     }

@@ -8,12 +8,14 @@ use crate::kaitaistruct::language::seq::Seq;
 use std::collections::HashMap;
 
 /// Types struct representing a collection of type specifications
+#[allow(dead_code)]
 pub struct Types {
     // HashMap mapping identifiers to type specifications
     types: HashMap<Identifier, TypeSpec>,
 }
 
 // TypeSpec struct representing a type specification
+#[allow(dead_code)]
 struct TypeSpec {
     // Metadata for the type
     meta: Meta,

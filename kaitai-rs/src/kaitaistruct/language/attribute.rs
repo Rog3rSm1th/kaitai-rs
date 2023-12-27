@@ -5,6 +5,7 @@ use crate::kaitaistruct::language::identifier::Identifier;
 use crate::kaitaistruct::language::kaitai_type::Type;
 
 // Attribute struct definition
+#[allow(dead_code)]
 pub struct Attribute {
     // Identifier for the attribute
     id: Identifier,
@@ -69,6 +70,7 @@ pub enum ProcessType {
 }
 
 // Process struct definition
+#[allow(dead_code)]
 pub struct Process {
     // Type of processing to be applied
     process_type: ProcessType,

@@ -1,15 +1,12 @@
 use crate::kaitaistruct::language::doc::Doc;
 use crate::kaitaistruct::language::doc_ref::DocRef;
-use crate::kaitaistruct::language::enums::Enum;
 use crate::kaitaistruct::language::enums::Enums;
-use crate::kaitaistruct::language::identifier::Identifier;
 use crate::kaitaistruct::language::meta::Meta;
 use crate::kaitaistruct::parser::doc::parse_doc;
 use crate::kaitaistruct::parser::doc_ref::parse_doc_ref;
 use crate::kaitaistruct::parser::enums::parse_enums;
 use crate::kaitaistruct::parser::meta::parse_meta;
 use serde_yaml::Value;
-use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, Read};
 
@@ -72,22 +69,22 @@ impl KsyParser {
                 }
 
                 // Process the "params" section
-                if let Some(params) = map.get(&Value::String("params".to_string())) {
+                if let Some(_params) = map.get(&Value::String("params".to_string())) {
                     // TODO: Implement processing for "params"
                 }
 
                 // Process the "seq" section
-                if let Some(seq) = map.get(&Value::String("seq".to_string())) {
+                if let Some(_seq) = map.get(&Value::String("seq".to_string())) {
                     // TODO: Implement processing for "seq"
                 }
 
                 // Process the "types" section
-                if let Some(types) = map.get(&Value::String("types".to_string())) {
+                if let Some(_types) = map.get(&Value::String("types".to_string())) {
                     // TODO: Implement processing for "types"
                 }
 
                 // Process the "instances" section
-                if let Some(instances) = map.get(&Value::String("instances".to_string())) {
+                if let Some(_instances) = map.get(&Value::String("instances".to_string())) {
                     // TODO: Implement processing for "instances"
                 }
 

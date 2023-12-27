@@ -1,7 +1,5 @@
 use crate::kaitaistruct::language::doc::Doc;
 use serde_yaml::Value;
-use std::error::Error;
-use std::fmt;
 use std::io;
 
 /// Parses the "doc" section of the Kaitai Struct definition.

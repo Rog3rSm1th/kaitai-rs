@@ -1,4 +1,3 @@
-use crate::config::config::Config;
 use crate::kaitaistruct::language::identifier::Identifier;
 use std::collections::HashMap;
 use std::io;
