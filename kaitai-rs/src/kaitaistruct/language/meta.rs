@@ -5,7 +5,6 @@ use std::io;
 
 // Meta struct, representing metadata
 #[derive(Debug)]
-#[allow(dead_code)]
 pub struct Meta {
     // Identifier information
     identifier: Option<Identifier>,
@@ -16,15 +15,16 @@ pub struct Meta {
     // Cross-referencing details
     file_extension: Option<FileExtension>,
     // Cross-referencing details
+    #[allow(dead_code)]
     xref: Option<XRef>,
     // License type
     license: Option<String>,
     // Kaitai Struct version
     ks_version: Option<f64>,
     // Boolean flag indicating whether KS debug mode is enabled
-    ks_debug: Option<bool>,
+    ks_debug: bool,
     // Boolean flag indicating whether KS opaque types are used
-    ks_opaque_types: Option<bool>,
+    ks_opaque_types: bool,
     // Import information
     imports: Option<Imports>,
     // Encoding used in the KS file
@@ -44,12 +44,67 @@ impl Meta {
             xref: None,
             license: None,
             ks_version: None,
-            ks_debug: None,
-            ks_opaque_types: None,
+            ks_debug: false,        // Set ks_debug to false by default
+            ks_opaque_types: false, // Set ks_opaque_types to false by default
             imports: None,
             encoding: None,
             endian: None,
         }
+    }
+
+    // Set identifier for Meta instance
+    pub fn set_identifier(&mut self, identifier: Identifier) {
+        self.identifier = Some(identifier);
+    }
+
+    // Set title for Meta instance
+    pub fn set_title(&mut self, title: String) {
+        self.title = Some(title);
+    }
+
+    // Set application for Meta instance
+    pub fn set_application(&mut self, values: Vec<String>) {
+        self.application = Some(Application::new(values));
+    }
+
+    // Set ks_debug for Meta instance
+    pub fn set_ks_debug(&mut self, ks_debug: bool) {
+        self.ks_debug = ks_debug;
+    }
+
+    // Set ks_opaque_types for Meta instance
+    pub fn set_ks_opaque_types(&mut self, ks_opaque_types: bool) {
+        self.ks_opaque_types = ks_opaque_types;
+    }
+
+    // Set license for Meta instance
+    pub fn set_license(&mut self, license: String) {
+        self.license = Some(license);
+    }
+
+    // Set endianness for Meta instance
+    pub fn set_endian(&mut self, endian: EndianEnum) {
+        self.endian = Some(Endian { endian });
+    }
+
+    // Set imports for Meta instance
+    pub fn set_imports(&mut self, values: Vec<String>) {
+        self.imports = Some(Imports::new(values).unwrap());
+    }
+
+    // Set encoding for Meta instance
+    pub fn set_encoding(&mut self, encoding: String) {
+        self.encoding = Some(encoding);
+    }
+
+    // Set file extensions for Meta instance
+    pub fn set_file_extension(&mut self, values: Vec<String>) {
+        self.file_extension = Some(FileExtension::new(values));
+    }
+
+    // Set Kaitai Struct version for Meta instance
+    pub fn set_ks_version(&mut self, version: f64) {
+        self.ks_version = Some(version);
     }
 }
 
@@ -329,21 +384,9 @@ pub enum EndianEnum {
     Be,
 }
 
-// Enum to represent various scalar types
-#[derive(Debug)]
-#[allow(dead_code)]
-pub enum AnyScalar {
-    Str(String),
-    Number(f64),
-    Bool(bool),
-    Integer(i64),
-    Null,
-}
-
 // Define the Endian struct to represent endian information
 #[derive(Debug)]
 #[allow(dead_code)]
 pub struct Endian {
-    switch_on: AnyScalar,
     endian: EndianEnum,
 }
