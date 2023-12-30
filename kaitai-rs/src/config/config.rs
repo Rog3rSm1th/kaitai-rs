@@ -21,7 +21,7 @@ impl Config {
     pub const LOC_IDENTIFIER_PATTERN: &'static str = concat!(r"^fdd\d{6}$");
 
     // Regular expression pattern for PRONOM identifiers
-    pub const PRONOM_IDENTIFIER_PATTERN: &'static str = concat!(r"^(x-)?fmt\\/\d+$");
+    pub const PRONOM_IDENTIFIER_PATTERN: &'static str = concat!(r"^(x-)?fmt\/\d+$");
 
     // Regular expression pattern for RFC identifiers
     pub const RFC_IDENTIFIER_PATTERN: &'static str = concat!(r"^[1-9]\d*$");
