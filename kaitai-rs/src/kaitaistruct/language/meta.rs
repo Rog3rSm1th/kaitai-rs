@@ -15,8 +15,7 @@ pub struct Meta {
     // Cross-referencing details
     file_extension: Option<FileExtension>,
     // Cross-referencing details
-    #[allow(dead_code)]
-    xref: Option<XRef>,
+    pub xref: XRef,
     // License type
     license: Option<String>,
     // Kaitai Struct version
@@ -41,7 +40,7 @@ impl Meta {
             title: None,
             application: None,
             file_extension: None,
-            xref: None,
+            xref: XRef::new(),
             license: None,
             ks_version: None,
             ks_debug: false,        // Set ks_debug to false by default
@@ -110,13 +109,11 @@ impl Meta {
 
 // Application struct to represent application information
 #[derive(Debug)]
-#[allow(dead_code)]
 struct Application {
     values: Vec<String>,
 }
 
 impl Application {
-    #[allow(dead_code)]
     fn new(values: Vec<String>) -> Self {
         Application { values }
     }
@@ -130,13 +127,11 @@ impl Application {
 
 // Define the FileExtension struct to represent file extension information
 #[derive(Debug)]
-#[allow(dead_code)]
 struct FileExtension {
     values: Vec<String>,
 }
 
 impl FileExtension {
-    #[allow(dead_code)]
     fn new(values: Vec<String>) -> Self {
         FileExtension { values }
     }
@@ -150,14 +145,12 @@ impl FileExtension {
 
 // ForensicWiki struct to represent ForensicWiki information
 #[derive(Debug)]
-#[allow(dead_code)]
-struct ForensicWiki {
+pub struct ForensicWiki {
     value: Vec<String>,
 }
 
 impl ForensicWiki {
-    #[allow(dead_code)]
-    fn new(values: Vec<String>) -> Result<Self, io::Error> {
+    pub fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the media wiki page pattern
         validate_values(&values, Config::MEDIA_WIKI_PAGE_NAME_PATTERN).unwrap();
 
@@ -173,14 +166,12 @@ impl ForensicWiki {
 
 // ISO struct to represent ISO information
 #[derive(Debug)]
-#[allow(dead_code)]
-struct ISO {
+pub struct ISO {
     value: Vec<String>,
 }
 
 impl ISO {
-    #[allow(dead_code)]
-    fn new(values: Vec<String>) -> Result<Self, io::Error> {
+    pub fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the ISO pattern
         validate_values(&values, Config::ISO_IDENTIFIER_PATTERN).unwrap();
 
@@ -196,14 +187,12 @@ impl ISO {
 
 // JustSolve struct to represent JustSolve information
 #[derive(Debug)]
-#[allow(dead_code)]
-struct JustSolve {
+pub struct JustSolve {
     value: Vec<String>,
 }
 
 impl JustSolve {
-    #[allow(dead_code)]
-    fn new(values: Vec<String>) -> Result<Self, io::Error> {
+    pub fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the media wiki page pattern
         validate_values(&values, Config::MEDIA_WIKI_PAGE_NAME_PATTERN).unwrap();
 
@@ -219,14 +208,12 @@ impl JustSolve {
 
 // LocIdentifier struct to represent LocIdentifier information
 #[derive(Debug)]
-#[allow(dead_code)]
-struct LocIdentifier {
+pub struct LocIdentifier {
     value: Vec<String>,
 }
 
 impl LocIdentifier {
-    #[allow(dead_code)]
-    fn new(values: Vec<String>) -> Result<Self, io::Error> {
+    pub fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the loc identifier pattern
         validate_values(&values, Config::LOC_IDENTIFIER_PATTERN).unwrap();
 
@@ -242,14 +229,12 @@ impl LocIdentifier {
 
 // MIMEType struct to represent MIMEType information
 #[derive(Debug)]
-#[allow(dead_code)]
-struct MIMEType {
+pub struct MIMEType {
     value: Vec<String>,
 }
 
 impl MIMEType {
-    #[allow(dead_code)]
-    fn new(values: Vec<String>) -> Result<Self, io::Error> {
+    pub fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the MIME type pattern
         validate_values(&values, Config::MIME_TYPE_PATTERN).unwrap();
 
@@ -265,14 +250,12 @@ impl MIMEType {
 
 // PronomIdentifier struct to represent PronomIdentifier information
 #[derive(Debug)]
-#[allow(dead_code)]
-struct PronomIdentifier {
+pub struct PronomIdentifier {
     value: Vec<String>,
 }
 
 impl PronomIdentifier {
-    #[allow(dead_code)]
-    fn new(values: Vec<String>) -> Result<Self, io::Error> {
+    pub fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the Pronom identifier pattern
         validate_values(&values, Config::PRONOM_IDENTIFIER_PATTERN).unwrap();
 
@@ -288,14 +271,12 @@ impl PronomIdentifier {
 
 // RFCIdentifier struct to represent RFCIdentifier information
 #[derive(Debug)]
-#[allow(dead_code)]
-struct RFCIdentifier {
+pub struct RFCIdentifier {
     value: Vec<String>,
 }
 
 impl RFCIdentifier {
-    #[allow(dead_code)]
-    fn new(values: Vec<String>) -> Result<Self, io::Error> {
+    pub fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the RFC identifier pattern
         validate_values(&values, Config::RFC_IDENTIFIER_PATTERN).unwrap();
 
@@ -311,16 +292,14 @@ impl RFCIdentifier {
 
 // WikiDataIdentifier struct to represent WikiDataIdentifier information
 #[derive(Debug)]
-#[allow(dead_code)]
-struct WikiDataIdentifier {
+pub struct WikiDataIdentifier {
     value: Vec<String>,
 }
 
 impl WikiDataIdentifier {
-    #[allow(dead_code)]
-    fn new(values: Vec<String>) -> Result<Self, io::Error> {
+    pub fn new(values: Vec<String>) -> Result<Self, io::Error> {
         // Check if all values match the WikiData identifier pattern
-        validate_values(&values, Config::IMPORT_PATTERN).unwrap();
+        validate_values(&values, Config::WIKI_DATA_IDENTIFIER_PATTERN).unwrap();
 
         Ok(WikiDataIdentifier { value: values })
     }
@@ -334,21 +313,75 @@ impl WikiDataIdentifier {
 
 // XRef struct to represent cross-referencing information
 #[derive(Debug)]
-#[allow(dead_code)]
-struct XRef {
-    forensic_wiki: ForensicWiki,
-    iso: ISO,
-    justsolve: JustSolve,
-    loc: LocIdentifier,
-    mime: MIMEType,
-    pronom: PronomIdentifier,
-    rfc: RFCIdentifier,
-    wikidata: WikiDataIdentifier,
+pub struct XRef {
+    pub forensic_wiki: Option<ForensicWiki>,
+    pub iso: Option<ISO>,
+    pub justsolve: Option<JustSolve>,
+    pub loc: Option<LocIdentifier>,
+    pub mime: Option<MIMEType>,
+    pub pronom: Option<PronomIdentifier>,
+    pub rfc: Option<RFCIdentifier>,
+    pub wikidata: Option<WikiDataIdentifier>,
+}
+
+impl XRef {
+    // Constructor for XRef struct with all fields set to None by default
+    pub fn new() -> Self {
+        XRef {
+            forensic_wiki: None,
+            iso: None,
+            justsolve: None,
+            loc: None,
+            mime: None,
+            pronom: None,
+            rfc: None,
+            wikidata: None,
+        }
+    }
+
+    // Set forensic_wiki for XRef instance
+    pub fn set_forensic_wiki(&mut self, value: ForensicWiki) {
+        self.forensic_wiki = Some(value);
+    }
+
+    // Set iso for XRef instance
+    pub fn set_iso(&mut self, value: ISO) {
+        self.iso = Some(value);
+    }
+
+    // Set justsolve for XRef instance
+    pub fn set_justsolve(&mut self, value: JustSolve) {
+        self.justsolve = Some(value);
+    }
+
+    // Set loc for XRef instance
+    pub fn set_loc(&mut self, value: LocIdentifier) {
+        self.loc = Some(value);
+    }
+
+    // Set mime for XRef instance
+    pub fn set_mime(&mut self, value: MIMEType) {
+        self.mime = Some(value);
+    }
+
+    // Set pronom for XRef instance
+    pub fn set_pronom(&mut self, value: PronomIdentifier) {
+        self.pronom = Some(value);
+    }
+
+    // Set rfc for XRef instance
+    pub fn set_rfc(&mut self, value: RFCIdentifier) {
+        self.rfc = Some(value);
+    }
+
+    // Set wikidata for XRef instance
+    pub fn set_wikidata(&mut self, value: WikiDataIdentifier) {
+        self.wikidata = Some(value);
+    }
 }
 
 // Enum to represent the possible types of KsVersion
 #[derive(Debug)]
-#[allow(dead_code)]
 pub enum KsVersionValue {
     String(String),
     Number(u64),
@@ -356,13 +389,11 @@ pub enum KsVersionValue {
 
 // Imports struct to represent import information
 #[derive(Debug)]
-#[allow(dead_code)]
 struct Imports {
     value: Vec<String>,
 }
 
 impl Imports {
-    #[allow(dead_code)]
     fn new(values: Vec<String>) -> Result<Self, io::Error> {
         validate_values(&values, Config::IMPORT_PATTERN).unwrap();
 
@@ -378,7 +409,6 @@ impl Imports {
 
 // Enum to represent the possible endian types
 #[derive(Debug)]
-#[allow(dead_code)]
 pub enum EndianEnum {
     Le,
     Be,

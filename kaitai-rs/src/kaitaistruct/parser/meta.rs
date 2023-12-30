@@ -1,6 +1,7 @@
 use crate::kaitaistruct::language::identifier::Identifier;
 use crate::kaitaistruct::language::meta::EndianEnum;
 use crate::kaitaistruct::language::meta::Meta;
+use crate::kaitaistruct::parser::xref::parse_xref;
 use serde_yaml::Value;
 use std::io;
 
@@ -60,6 +61,10 @@ pub fn parse_meta(meta_instance: &mut Meta, meta: &Value) -> Result<(), io::Erro
 
         if let Some(version_value) = meta_map.get(&Value::String("ks-version".to_string())) {
             parse_version(meta_instance, version_value)?;
+        }
+
+        if let Some(xref_value) = meta_map.get(&Value::String("xref".to_string())) {
+            parse_xref(meta_instance, xref_value)?;
         }
 
         return Ok(());

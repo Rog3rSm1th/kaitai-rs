@@ -6,7 +6,7 @@ impl Config {
 
     // Regular expression pattern for MediaWiki page names
     pub const MEDIA_WIKI_PAGE_NAME_PATTERN: &'static str =
-        concat!(r"^([a-zA-Z0-9$\\-._~+!*'(),@&;:\\/]|%[0-9a-fA-F]{2})+$");
+        concat!(r"^([a-zA-Z0-9$\-._~+!*'(),@&;:\/]|%[0-9a-fA-F]{2})+$");
 
     // Regular expression pattern for ISO identifiers
     pub const ISO_IDENTIFIER_PATTERN: &'static str = concat!(r"^[1-9]\d*(-[0-9]+)?:(19|20)\d{2}$");
@@ -18,16 +18,16 @@ impl Config {
     );
 
     // Regular expression pattern for LOC identifiers
-    pub const LOC_IDENTIFIER_PATTERN: &'static str = concat!(r"^fdd\\d{6}$");
+    pub const LOC_IDENTIFIER_PATTERN: &'static str = concat!(r"^fdd\d{6}$");
 
     // Regular expression pattern for PRONOM identifiers
-    pub const PRONOM_IDENTIFIER_PATTERN: &'static str = concat!(r"^(x-)?fmt\\/\\d+$");
+    pub const PRONOM_IDENTIFIER_PATTERN: &'static str = concat!(r"^(x-)?fmt\\/\d+$");
 
     // Regular expression pattern for RFC identifiers
-    pub const RFC_IDENTIFIER_PATTERN: &'static str = concat!(r"^[1-9]\\d*$");
+    pub const RFC_IDENTIFIER_PATTERN: &'static str = concat!(r"^[1-9]\d*$");
 
     // Regular expression pattern for WikiData identifiers
-    pub const WIKI_DATA_IDENTIFIER_PATTERN: &'static str = concat!(r"^Q[1-9]\\d*$");
+    pub const WIKI_DATA_IDENTIFIER_PATTERN: &'static str = concat!(r"^Q[1-9]\d*$");
 
     // Regular expression pattern for imports
     pub const IMPORT_PATTERN: &'static str = concat!(r"^(.*/)?[a-z][a-z0-9_]*$");
