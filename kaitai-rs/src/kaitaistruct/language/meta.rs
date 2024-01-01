@@ -1,6 +1,6 @@
-use crate::config::config::Config;
+use crate::config::Config;
 use crate::kaitaistruct::language::identifier::Identifier;
-use crate::utils::utils::validate_values;
+use crate::utils::validate_values;
 use std::io;
 
 // Meta struct, representing metadata

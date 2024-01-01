@@ -1,0 +1,45 @@
+name: Kaitai-rs Build & Lint & Test
+
+# This workflow runs tests and build for each push on master branch
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+
+  test_phaser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Update local toolchain
+        run: |
+          rustup update
+          rustup component add clippy
+          rustup install nightly          
+
+      - name: Toolchain info
+        run: |
+          cargo --version --verbose
+          rustc --version
+          cargo clippy --version          
+
+      # TODO : Fix lint problems before enabling 
+      # - name: Lint
+      #   run: |
+      #     cd kaitai-rs
+      #     cargo fmt -- --check
+      #     cargo clippy -- -D warnings          
+
+      - name: Test
+        run: |
+          cd kaitai-rs
+          cargo check
+          cargo test --all          
+
+      - name: Build
+        run: |
+          cd kaitai-rs
+          cargo build --release   

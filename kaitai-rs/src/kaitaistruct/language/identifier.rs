@@ -1,5 +1,5 @@
-use crate::config::config::Config;
-use crate::utils::utils::validate_values;
+use crate::config::Config;
+use crate::utils::validate_values;
 use std::io;
 
 // Identifier struct to represent an identifier

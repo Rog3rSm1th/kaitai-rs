@@ -1,5 +1,5 @@
-use kaitai_rs::config::config::Config;
-use kaitai_rs::utils::utils::validate_values;
+use kaitai_rs::config::Config;
+use kaitai_rs::utils::validate_values;
 
 // This file contains unit tests for the generic validation function `validate_values`
 // implemented in the `utils` module. The function is designed to validate a collection
@@ -149,7 +149,7 @@ fn test_validate_rfc() {
 #[test]
 fn test_validate_wiki_data_identifiers() {
     // Define a set of valid WikiData identifiers
-    let valid_wiki_data = vec!["Q123".to_string(), "Q98765".to_string()];
+    let valid_wiki_data_identifiers = vec!["Q123".to_string(), "Q98765".to_string()];
 
     // Define a set of invalid WikiData identifiers
     let invalid_wiki_data_identifiers = vec![
