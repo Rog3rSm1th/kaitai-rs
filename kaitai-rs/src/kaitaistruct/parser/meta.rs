@@ -1,6 +1,6 @@
-use crate::kaitaistruct::language::identifier::Identifier;
 use crate::kaitaistruct::language::meta::EndianEnum;
 use crate::kaitaistruct::language::meta::Meta;
+use crate::kaitaistruct::parser::identifier::parse_identifier;
 use crate::kaitaistruct::parser::xref::parse_xref;
 use serde_yaml::Value;
 use std::io;
@@ -74,12 +74,6 @@ pub fn parse_meta(meta_instance: &mut Meta, meta: &Value) -> Result<(), io::Erro
         io::ErrorKind::InvalidData,
         "Unexpected or missing 'id' field in meta section",
     ))
-}
-
-/// Parses the identifier field within the "meta" section
-fn parse_identifier(id_str: &str) -> Result<Identifier, io::Error> {
-    Identifier::new(vec![id_str.to_string()])
-        .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e.to_string()))
 }
 
 /// Parses the title field within the "meta" section

@@ -59,8 +59,7 @@ pub fn parse_xref(meta_instance: &mut Meta, xref_value: &Value) -> Result<(), io
         );
         parse_xref_field!(
             meta_instance,
-            map.get(&Value::String("iso".to_string()))
-                .cloned(),
+            map.get(&Value::String("iso".to_string())).cloned(),
             iso,
             ISO
         );
