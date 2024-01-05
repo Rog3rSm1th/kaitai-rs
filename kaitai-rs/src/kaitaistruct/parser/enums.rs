@@ -31,7 +31,10 @@ fn parse_enum(
     // If "enum_values" is a mapping, proceed with parsing
     if let Value::Mapping(variant_map) = enum_values {
         // Create an Identifier for the Enum
-        let enum_identifier = Identifier::new(vec![enum_name.as_str().unwrap().to_string()])
+        let mut enum_identifier = Identifier::new();
+
+        enum_identifier
+            .from_string_vec(vec![enum_name.as_str().unwrap().to_string()])
             .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e.to_string()))?;
 
         // Create an Enum instance to store parsed variant values

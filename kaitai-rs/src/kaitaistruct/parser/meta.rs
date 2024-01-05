@@ -10,8 +10,7 @@ pub fn parse_meta(meta_instance: &mut Meta, meta: &Value) -> Result<(), io::Erro
     if let Value::Mapping(meta_map) = meta {
         if let Some(id_value) = meta_map.get(&Value::String("id".to_string())) {
             if let Value::String(id_str) = id_value {
-                let meta_identifier = parse_identifier(id_str)?;
-                meta_instance.set_identifier(meta_identifier);
+                parse_identifier(&mut meta_instance.identifier, id_str).unwrap();
             }
         }
 

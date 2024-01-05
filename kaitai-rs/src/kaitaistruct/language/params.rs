@@ -25,7 +25,7 @@ impl Params {}
 #[derive(Debug)]
 pub struct ParamSpec {
     // Identifier for the parameter
-    pub id: Option<Identifier>,
+    pub id: Identifier,
     // TODO: implement type system
     pub param_type: Option<String>,
     // Documentation for the parameter
@@ -40,17 +40,12 @@ impl ParamSpec {
     /// Constructs a new ParamSpec instance with default values
     pub fn new() -> Self {
         ParamSpec {
-            id: None,
+            id: Identifier::new(),
             param_type: None,
             doc: Doc::new(),
             doc_ref: DocRef::new(),
             enum_type: None,
         }
-    }
-
-    /// Sets the identifier for the parameter
-    pub fn set_identifier(&mut self, id: Identifier) {
-        self.id = Some(id);
     }
 
     /// Sets the type for the parameter

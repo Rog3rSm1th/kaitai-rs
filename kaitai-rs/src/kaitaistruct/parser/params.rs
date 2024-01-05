@@ -25,8 +25,7 @@ pub fn parse_paramspec(params_instance: &mut Params, param_spec: &Value) -> Resu
             if let Value::String(_str_value) = value {
                 match key.as_str() {
                     Some("id") => {
-                        let paramspec_identifier = parse_identifier(value.as_str().unwrap())?;
-                        paramspec.set_identifier(paramspec_identifier);
+                        parse_identifier(&mut paramspec.id, value.as_str().unwrap()).unwrap();
                     }
 
                     // TODO : Write the type parser

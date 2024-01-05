@@ -7,7 +7,7 @@ use std::io;
 #[derive(Debug)]
 pub struct Meta {
     // Identifier information
-    identifier: Option<Identifier>,
+    pub identifier: Identifier,
     // Title of the Kaitai Struct
     title: Option<String>,
     // File extension information
@@ -36,7 +36,7 @@ impl Meta {
     // Constructor for Meta struct with all fields set to None
     pub fn new() -> Self {
         Meta {
-            identifier: None,
+            identifier: Identifier::new(),
             title: None,
             application: None,
             file_extension: None,
@@ -49,11 +49,6 @@ impl Meta {
             encoding: None,
             endian: None,
         }
-    }
-
-    // Set identifier for Meta instance
-    pub fn set_identifier(&mut self, identifier: Identifier) {
-        self.identifier = Some(identifier);
     }
 
     // Set title for Meta instance
