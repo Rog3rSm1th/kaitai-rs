@@ -2,6 +2,7 @@ use crate::kaitaistruct::language::doc::Doc;
 use crate::kaitaistruct::language::doc_ref::DocRef;
 use crate::kaitaistruct::language::enums::Enum;
 use crate::kaitaistruct::language::identifier::Identifier;
+use crate::kaitaistruct::language::kaitai_type::Type;
 
 /// Params struct representing a list of params specifications
 #[derive(Debug)]
@@ -27,7 +28,7 @@ pub struct ParamSpec {
     // Identifier for the parameter
     pub id: Identifier,
     // TODO: implement type system
-    pub param_type: Option<String>,
+    pub param_type: Option<Type>,
     // Documentation for the parameter
     pub doc: Doc,
     // Reference to external documentation
@@ -49,7 +50,7 @@ impl ParamSpec {
     }
 
     /// Sets the type for the parameter
-    pub fn set_param_type(&mut self, param_type: String) {
+    pub fn set_param_type(&mut self, param_type: Type) {
         self.param_type = Some(param_type);
     }
 

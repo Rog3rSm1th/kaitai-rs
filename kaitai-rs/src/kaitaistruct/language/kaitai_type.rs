@@ -1,10 +1,10 @@
 // Enumeration representing all existing types
-#[allow(dead_code)]
-enum PureType {
-    UnsignedInteger,
-    SignedInteger,
+#[derive(Debug)]
+pub enum PureType {
+    UnsignedInteger(u8),
+    SignedInteger(u8),
     BitSizedInteger(u8),
-    FloatingPoint,
+    FloatingPoint(u8),
     ByteArray,
     String,
     Boolean,
@@ -15,10 +15,10 @@ enum PureType {
 }
 
 // Type structure
-#[allow(dead_code)]
+#[derive(Debug)]
 pub struct Type {
     // The pure type associated with the Type instance
-    pure_type: PureType,
+    pub pure_type: PureType,
     // Indicates whether the type is an array
-    is_array: bool,
+    pub is_array: bool,
 }
