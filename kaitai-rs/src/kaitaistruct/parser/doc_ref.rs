@@ -24,9 +24,6 @@ pub fn parse_doc_ref(doc_ref_instance: &mut DocRef, doc_ref: &Value) -> Result<(
 
 /// Parses a single URL in the "doc_ref" section.
 fn parse_single_doc_ref(doc_ref_instance: &mut DocRef, url: &str) -> Result<(), io::Error> {
-    // Print the URL for demonstration purposes
-    println!("{}", url);
-
     // Add the single URL to the DocRef instance
     doc_ref_instance.add_docref(url)?;
 

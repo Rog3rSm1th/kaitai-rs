@@ -5,4 +5,5 @@ pub mod identifier;
 pub mod meta;
 pub mod params;
 pub mod parser;
+pub mod types;
 pub mod xref;

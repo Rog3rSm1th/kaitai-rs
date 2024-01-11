@@ -3,11 +3,13 @@ use crate::kaitaistruct::language::doc_ref::DocRef;
 use crate::kaitaistruct::language::enums::Enums;
 use crate::kaitaistruct::language::meta::Meta;
 use crate::kaitaistruct::language::params::Params;
+use crate::kaitaistruct::language::types::Types;
 use crate::kaitaistruct::parser::doc::parse_doc;
 use crate::kaitaistruct::parser::doc_ref::parse_doc_ref;
 use crate::kaitaistruct::parser::enums::parse_enums;
 use crate::kaitaistruct::parser::meta::parse_meta;
 use crate::kaitaistruct::parser::params::parse_params;
+use crate::kaitaistruct::parser::types::parse_types;
 use serde_yaml::Value;
 use std::fs::File;
 use std::io::{self, Read};
@@ -19,6 +21,7 @@ pub struct KsyParser {
     pub enums: Enums,
     pub meta: Meta,
     pub params: Params,
+    pub types: Types,
 }
 
 impl KsyParser {
@@ -29,6 +32,7 @@ impl KsyParser {
             enums: Enums::new(),
             meta: Meta::new(),
             params: Params::new(),
+            types: Types::new(),
         }
     }
 
@@ -83,8 +87,8 @@ impl KsyParser {
                 }
 
                 // Process the "types" section
-                if let Some(_types) = map.get(&Value::String("types".to_string())) {
-                    // TODO: Implement processing for "types"
+                if let Some(types) = map.get(&Value::String("types".to_string())) {
+                    parse_types(&mut self.types, types).unwrap();
                 }
 
                 // Process the "instances" section

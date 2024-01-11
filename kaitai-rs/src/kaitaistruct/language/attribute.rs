@@ -6,6 +6,7 @@ use crate::kaitaistruct::language::kaitai_type::Type;
 
 // Attribute struct definition
 #[allow(dead_code)]
+#[derive(Debug)]
 pub struct Attribute {
     // Identifier for the attribute
     id: Identifier,
@@ -48,6 +49,7 @@ pub struct Attribute {
 }
 
 // Repeat enum for defining repetition behavior
+#[derive(Debug)]
 pub enum Repeat {
     // Repeat until the end of the current stream
     Eos,
@@ -58,6 +60,7 @@ pub enum Repeat {
 }
 
 // ProcessType enum for defining processing types
+#[derive(Debug)]
 pub enum ProcessType {
     // Zlib decompression
     Zlib,
@@ -71,6 +74,7 @@ pub enum ProcessType {
 
 // Process struct definition
 #[allow(dead_code)]
+#[derive(Debug)]
 pub struct Process {
     // Type of processing to be applied
     process_type: ProcessType,
