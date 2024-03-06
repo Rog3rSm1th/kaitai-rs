@@ -15,4 +15,9 @@ impl Seq {
             attributes: Vec::new(),
         }
     }
+
+    // Add an attribute to the sequence
+    pub fn add_attribute(&mut self, attribute: Attribute) {
+        self.attributes.push(attribute);
+    }
 }

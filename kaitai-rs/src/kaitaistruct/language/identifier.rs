@@ -21,6 +21,7 @@ impl Identifier {
     }
 
     // Sets the value field instance from a string
+    // TODO : Make this method return a Identifier
     pub fn from_string(&mut self, identifier: &str) -> Result<(), io::Error> {
         let values: Vec<String> = vec![identifier.to_string()];
 

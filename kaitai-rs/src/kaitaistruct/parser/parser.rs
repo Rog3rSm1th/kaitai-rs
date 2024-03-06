@@ -7,9 +7,11 @@ use crate::kaitaistruct::language::types::Types;
 use crate::kaitaistruct::parser::doc::parse_doc;
 use crate::kaitaistruct::parser::doc_ref::parse_doc_ref;
 use crate::kaitaistruct::parser::enums::parse_enums;
+use crate::kaitaistruct::parser::seq::parse_seq;
 use crate::kaitaistruct::parser::meta::parse_meta;
 use crate::kaitaistruct::parser::params::parse_params;
 use crate::kaitaistruct::parser::types::parse_types;
+use crate::kaitaistruct::language::seq::Seq;
 use serde_yaml::Value;
 use std::fs::File;
 use std::io::{self, Read};
@@ -21,6 +23,7 @@ pub struct KsyParser {
     pub enums: Enums,
     pub meta: Meta,
     pub params: Params,
+    pub seq: Seq,
     pub types: Types,
 }
 
@@ -32,6 +35,7 @@ impl KsyParser {
             enums: Enums::new(),
             meta: Meta::new(),
             params: Params::new(),
+            seq: Seq::new(),
             types: Types::new(),
         }
     }
@@ -82,8 +86,8 @@ impl KsyParser {
                 }
 
                 // Process the "seq" section
-                if let Some(_seq) = map.get(&Value::String("seq".to_string())) {
-                    // TODO: Implement processing for "seq"
+                if let Some(seq) = map.get(&Value::String("seq".to_string())) {
+                    parse_seq(&mut self.seq, seq).unwrap();
                 }
 
                 // Process the "types" section
@@ -120,5 +124,6 @@ impl KsyParser {
         println!("{:#?}", self.enums);
         println!("{:#?}", self.meta);
         println!("{:#?}", self.params);
+        println!("{:#?}", self.seq);
     }
 }
