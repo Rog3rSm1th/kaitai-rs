@@ -1,10 +1,10 @@
-use crate::kaitaistruct::language::kaitai_type::PureType;
 use crate::kaitaistruct::language::kaitai_type::Type;
 use crate::kaitaistruct::language::params::ParamSpec;
 use crate::kaitaistruct::language::params::Params;
 use crate::kaitaistruct::parser::doc::parse_doc;
 use crate::kaitaistruct::parser::doc_ref::parse_doc_ref;
 use crate::kaitaistruct::parser::identifier::parse_identifier;
+use crate::kaitaistruct::parser::kaitai_type::parse_kaitai_type;
 use serde_yaml::Value;
 use std::io;
 
@@ -48,52 +48,10 @@ pub fn parse_paramspec(params_instance: &mut Params, param_spec: &Value) -> Resu
     Ok(())
 }
 
-/// Parses the "type" field of params specs
+/// Parses the "type" field of params specs and updates the `params_instance` with the parsed type.
 pub fn parse_type(params_instance: &mut Option<Type>, param_type: &Value) -> Result<(), io::Error> {
     if let Value::String(type_str) = param_type {
-        let (base_type, is_array) = if type_str.ends_with("[]") {
-            // If the last two characters are "[]", it's an array
-            (&type_str[..type_str.len() - 2], true)
-        } else {
-            // Otherwise, it's a non-array type
-            (type_str.as_str(), false)
-        };
-
-        let pure_type = if base_type.starts_with("bx") && base_type.len() > 2 {
-            // If it starts with "bx" and has a size greater than 1
-            let size: u8 = base_type[2..].parse().unwrap_or(0);
-            if size != 1 {
-                PureType::BitSizedInteger(size)
-            } else {
-                PureType::AnyType // Placeholder for unexpected cases
-            }
-        } else {
-            match base_type {
-                "u1" => PureType::UnsignedInteger(1),
-                "u2" => PureType::UnsignedInteger(2),
-                "u4" => PureType::UnsignedInteger(4),
-                "u8" => PureType::UnsignedInteger(8),
-                "s1" => PureType::SignedInteger(1),
-                "s2" => PureType::SignedInteger(2),
-                "s4" => PureType::SignedInteger(4),
-                "s8" => PureType::SignedInteger(8),
-                "f4" => PureType::FloatingPoint(4),
-                "f8" => PureType::FloatingPoint(8),
-                "bool" | "b1" => PureType::Boolean,
-                "str" => PureType::String,
-                "struct" => PureType::ArbitraryStruct,
-                "io" => PureType::IOStream,
-                "any" => PureType::AnyType,
-                // TODO : implement a parsing system for user-defined type
-                _ => PureType::AnyType, // Placeholder for unknown types
-            }
-        };
-
-        let type_instance = Type {
-            pure_type,
-            is_array,
-        };
-
+        let type_instance = parse_kaitai_type(type_str)?;
         *params_instance = Some(type_instance);
     }
 

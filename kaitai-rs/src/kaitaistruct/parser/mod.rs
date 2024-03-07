@@ -1,11 +1,12 @@
+pub mod attribute;
 pub mod doc;
 pub mod doc_ref;
 pub mod enums;
 pub mod identifier;
+pub mod kaitai_type;
 pub mod meta;
 pub mod params;
 pub mod parser;
+pub mod seq;
 pub mod types;
 pub mod xref;
-pub mod seq;
-pub mod attribute;
