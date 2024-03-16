@@ -11,24 +11,24 @@ macro_rules! parse_xref_field {
         if let Some(value) = $xref_value {
             match value {
                 Value::String(s) => {
-                    // Creating a new instance of the specified field type with a single value.
                     let field_instance = <$field_type>::new(vec![s.clone()])?;
-                    // Updating the Meta instance with the parsed field.
                     $meta_instance.xref.$field = Some(field_instance);
                 }
                 Value::Sequence(values) => {
-                    // Extracting values from the sequence, converting them to strings, and collecting them into a vector.
                     let field_values: Vec<String> = values
                         .iter()
                         .filter_map(|v| v.as_str().map(String::from))
                         .collect();
-                    // Creating a new instance of the specified field type with the collected values.
                     let field_instance = <$field_type>::new(field_values)?;
-                    // Updating the Meta instance with the parsed field.
+                    $meta_instance.xref.$field = Some(field_instance);
+                }
+                // For the RFC field 
+                Value::Number(n) => {
+                    let field_value = n.to_string();
+                    let field_instance = <$field_type>::new(vec![field_value.clone()])?;
                     $meta_instance.xref.$field = Some(field_instance);
                 }
                 _ => {
-                    // Returning an error if the value is not a String or a Sequence.
                     return Err(io::Error::new(
                         io::ErrorKind::InvalidData,
                         concat!("Invalid value for '", stringify!($field), "' field in xref section"),
