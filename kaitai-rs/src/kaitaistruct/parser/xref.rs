@@ -22,7 +22,7 @@ macro_rules! parse_xref_field {
                     let field_instance = <$field_type>::new(field_values)?;
                     $meta_instance.xref.$field = Some(field_instance);
                 }
-                // For the RFC field 
+                // For the RFC field
                 Value::Number(n) => {
                     let field_value = n.to_string();
                     let field_instance = <$field_type>::new(vec![field_value.clone()])?;
@@ -31,7 +31,11 @@ macro_rules! parse_xref_field {
                 _ => {
                     return Err(io::Error::new(
                         io::ErrorKind::InvalidData,
-                        concat!("Invalid value for '", stringify!($field), "' field in xref section"),
+                        concat!(
+                            "Invalid value for '",
+                            stringify!($field),
+                            "' field in xref section"
+                        ),
                     ));
                 }
             }
