@@ -3,6 +3,7 @@ pub mod doc;
 pub mod doc_ref;
 pub mod enums;
 pub mod identifier;
+pub mod instances;
 pub mod kaitai_type;
 pub mod meta;
 pub mod params;

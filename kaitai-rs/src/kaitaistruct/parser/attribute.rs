@@ -13,18 +13,17 @@ use crate::kaitaistruct::parser::kaitai_type::parse_kaitai_type;
 use serde_yaml::Value;
 use std::io;
 
-// Parses an attribute from a Kaitai Struct definition and add it to a seq instance
-pub fn parse_attribute(seq_instance: &mut Seq, attribute: &Value) -> Result<(), io::Error> {
-    // Parse the "id" field as the identifier
-    let id_str = attribute
-        .get("id")
-        .and_then(|value| value.as_str())
-        .ok_or_else(|| {
-            io::Error::new(io::ErrorKind::InvalidData, "Missing or invalid 'id' field")
-        })?;
+// Parses an attribute from a Kaitai Struct definition and returns it
+pub fn parse_attribute(attribute: &Value) -> Result<Attribute, io::Error> {
+    // Check if the "id" field exists before parsing it
+    let identifier = if let Some(id_value) = attribute.get("id").and_then(|value| value.as_str()) {
+        let mut identifier = Identifier::new();
+        parse_identifier(&mut identifier, id_value)?;
 
-    let mut identifier = Identifier::new();
-    parse_identifier(&mut identifier, id_str)?;
+        Some(identifier)
+    } else {
+        None
+    };
 
     // Check if the "doc" field exists and parse it if it does
     let doc = if let Some(doc_value) = attribute.get("doc") {
@@ -91,10 +90,7 @@ pub fn parse_attribute(seq_instance: &mut Seq, attribute: &Value) -> Result<(), 
     parse_attribute_field!(attribute, "io", parse_io);
     parse_attribute_field!(attribute, "value", parse_value);
 
-    // Add the new Attribute instance to the sequence
-    seq_instance.add_attribute(new_attribute);
-
-    Ok(())
+    Ok(new_attribute)
 }
 
 // Parses the "contents" attribute of an Attribute instance from the provided Value
@@ -445,16 +441,21 @@ pub fn parse_value(
     attribute_instance: &mut Attribute,
     value_value: &Value,
 ) -> Result<(), io::Error> {
-    let value = match value_value.as_str() {
-        Some(s) => s.to_string(),
-        None => {
-            return Err(io::Error::new(
-                io::ErrorKind::InvalidData,
-                "Invalid 'value' field. Expected a string.",
-            ))
-        }
-    };
+    // Attempt to parse value as an integer
+    if let Some(int_value) = value_value.as_i64() {
+        attribute_instance.set_value(int_value.to_string());
+        return Ok(());
+    }
 
-    attribute_instance.set_value(value);
-    Ok(())
+    // If parsing as an integer fails, treat it as a string
+    if let Some(str_value) = value_value.as_str() {
+        attribute_instance.set_value(str_value.to_string());
+        return Ok(());
+    }
+
+    // If value is neither an integer nor a string, return an error
+    Err(io::Error::new(
+        io::ErrorKind::InvalidData,
+        "Invalid 'value' field. Expected an integer or a string.",
+    ))
 }

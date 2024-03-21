@@ -7,7 +7,8 @@ use std::io;
 pub fn parse_seq(seq_instance: &mut Seq, seq: &Value) -> Result<(), io::Error> {
     if let Value::Sequence(sequence) = seq {
         for attribute in sequence {
-            parse_attribute(seq_instance, attribute)?;
+            let parsed_attribute = parse_attribute(attribute)?;
+            seq_instance.add_attribute(parsed_attribute);
         }
     }
     Ok(())

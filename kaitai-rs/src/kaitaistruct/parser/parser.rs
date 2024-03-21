@@ -1,6 +1,7 @@
 use crate::kaitaistruct::language::doc::Doc;
 use crate::kaitaistruct::language::doc_ref::DocRef;
 use crate::kaitaistruct::language::enums::Enums;
+use crate::kaitaistruct::language::instances::Instances;
 use crate::kaitaistruct::language::meta::Meta;
 use crate::kaitaistruct::language::params::Params;
 use crate::kaitaistruct::language::seq::Seq;
@@ -8,6 +9,7 @@ use crate::kaitaistruct::language::types::Types;
 use crate::kaitaistruct::parser::doc::parse_doc;
 use crate::kaitaistruct::parser::doc_ref::parse_doc_ref;
 use crate::kaitaistruct::parser::enums::parse_enums;
+use crate::kaitaistruct::parser::instances::parse_instances;
 use crate::kaitaistruct::parser::meta::parse_meta;
 use crate::kaitaistruct::parser::params::parse_params;
 use crate::kaitaistruct::parser::seq::parse_seq;
@@ -21,6 +23,7 @@ pub struct KsyParser {
     pub doc: Doc,
     pub doc_ref: DocRef,
     pub enums: Enums,
+    pub instances: Instances,
     pub meta: Meta,
     pub params: Params,
     pub seq: Seq,
@@ -33,6 +36,7 @@ impl KsyParser {
             doc: Doc::new(),
             doc_ref: DocRef::new(),
             enums: Enums::new(),
+            instances: Instances::new(),
             meta: Meta::new(),
             params: Params::new(),
             seq: Seq::new(),
@@ -96,8 +100,8 @@ impl KsyParser {
                 }
 
                 // Process the "instances" section
-                if let Some(_instances) = map.get(&Value::String("instances".to_string())) {
-                    // TODO: Implement processing for "instances"
+                if let Some(instances) = map.get(&Value::String("instances".to_string())) {
+                    parse_instances(&mut self.instances, instances).unwrap();
                 }
 
                 // Process the "enums" section
@@ -122,6 +126,7 @@ impl KsyParser {
         println!("{:#?}", self.doc);
         println!("{:#?}", self.doc_ref);
         println!("{:#?}", self.enums);
+        println!("{:#?}", self.instances);
         println!("{:#?}", self.meta);
         println!("{:#?}", self.params);
         println!("{:#?}", self.seq);

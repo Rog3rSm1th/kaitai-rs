@@ -10,7 +10,7 @@ use serde_yaml::Value;
 #[derive(Debug)]
 pub struct Attribute {
     // Identifier for the attribute
-    id: Identifier,
+    id: Option<Identifier>,
     // Documentation for the attribute
     doc: Option<Doc>,
     // Reference to external documentation
@@ -58,7 +58,7 @@ pub struct Attribute {
 impl Attribute {
     /// Creates a new Attribute instance.
     pub fn new(
-        id: Identifier,
+        id: Option<Identifier>,
         doc: Option<Doc>,
         doc_ref: Option<DocRef>,
         contents: Option<Vec<Value>>,
