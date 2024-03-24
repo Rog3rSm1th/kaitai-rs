@@ -5,7 +5,6 @@ use crate::kaitaistruct::language::attribute::Repeat;
 use crate::kaitaistruct::language::doc::Doc;
 use crate::kaitaistruct::language::doc_ref::DocRef;
 use crate::kaitaistruct::language::identifier::Identifier;
-use crate::kaitaistruct::language::seq::Seq;
 use crate::kaitaistruct::parser::doc::parse_doc;
 use crate::kaitaistruct::parser::doc_ref::parse_doc_ref;
 use crate::kaitaistruct::parser::identifier::parse_identifier;
