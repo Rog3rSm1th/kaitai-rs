@@ -1,9 +1,10 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-type NodeRef<T> = Rc<RefCell<Node<T>>>;
+pub type NodeRef<T> = Rc<RefCell<Node<T>>>;
 
 /// A struct representing a node in an Abstract Syntax Tree (AST)
+#[derive(Debug)]
 pub struct Node<T> {
     /// The parent of this node in the AST, if any
     parent: Option<NodeRef<T>>,
@@ -17,7 +18,7 @@ pub struct Node<T> {
 
 impl<T> Node<T> {
     /// Creates a new `Node` with no parent, no children, and no data
-    fn new() -> NodeRef<T> {
+    pub fn new() -> NodeRef<T> {
         Rc::new(RefCell::new(Node {
             parent: None,
             children: Vec::new(),
@@ -26,37 +27,46 @@ impl<T> Node<T> {
     }
 
     /// Sets the data associated with this node in the AST
-    fn set_data(&mut self, data: T) {
+    pub fn set_data(&mut self, data: T) {
         self.data = Some(data);
     }
 
     /// Gets the data associated with this node in the AST, if any
-    fn get_data(&self) -> Option<&T> {
+    pub fn get_data(&self) -> Option<&T> {
         self.data.as_ref()
     }
 
     /// Sets the parent of this node in the AST
-    fn set_parent(&mut self, parent: NodeRef<T>) {
+    pub fn set_parent(&mut self, parent: NodeRef<T>) {
         self.parent = Some(parent);
     }
 
     /// Gets the parent of this node in the AST, if any
-    fn get_parent(&self) -> Option<&NodeRef<T>> {
+    pub fn get_parent(&self) -> Option<&NodeRef<T>> {
         self.parent.as_ref()
     }
 
     /// Adds a child to this node in the AST
-    fn add_child(&mut self, child: NodeRef<T>) {
+    pub fn add_child(&mut self, child: NodeRef<T>) {
         self.children.push(child);
     }
 
     /// Gets the children of this node in the AST, if any
-    fn get_children(&self) -> &Vec<NodeRef<T>> {
+    pub fn get_children(&self) -> &Vec<NodeRef<T>> {
         &self.children
     }
 }
 
+impl<T: PartialEq> PartialEq for Node<T> {
+    /// Compares two `Node` instances for equality.
+    fn eq(&self, other: &Self) -> bool {
+        // Compare `parent`, `children`, and `data` fields for equality.
+        self.parent == other.parent && self.children == other.children && self.data == other.data
+    }
+}
+
 /// A struct representing an Abstract Syntax Tree (AST)
+#[derive(Debug)]
 pub struct AST<T> {
     /// The root node of the AST
     root: NodeRef<T>,
