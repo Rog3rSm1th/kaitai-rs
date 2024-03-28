@@ -1,25 +1,25 @@
-use crate::kaitaistruct::language::doc::Doc;
-use crate::kaitaistruct::language::doc_ref::DocRef;
-use crate::kaitaistruct::language::enums::Enums;
-use crate::kaitaistruct::language::instances::Instances;
-use crate::kaitaistruct::language::meta::Meta;
-use crate::kaitaistruct::language::params::Params;
-use crate::kaitaistruct::language::seq::Seq;
-use crate::kaitaistruct::language::types::Types;
-use crate::kaitaistruct::parser::doc::parse_doc;
-use crate::kaitaistruct::parser::doc_ref::parse_doc_ref;
-use crate::kaitaistruct::parser::enums::parse_enums;
-use crate::kaitaistruct::parser::instances::parse_instances;
-use crate::kaitaistruct::parser::meta::parse_meta;
-use crate::kaitaistruct::parser::params::parse_params;
-use crate::kaitaistruct::parser::seq::parse_seq;
-use crate::kaitaistruct::parser::types::parse_types;
+use crate::ks_language::language::doc::Doc;
+use crate::ks_language::language::doc_ref::DocRef;
+use crate::ks_language::language::enums::Enums;
+use crate::ks_language::language::instances::Instances;
+use crate::ks_language::language::meta::Meta;
+use crate::ks_language::language::params::Params;
+use crate::ks_language::language::seq::Seq;
+use crate::ks_language::language::types::Types;
+use crate::ks_language::parser::doc::parse_doc;
+use crate::ks_language::parser::doc_ref::parse_doc_ref;
+use crate::ks_language::parser::enums::parse_enums;
+use crate::ks_language::parser::instances::parse_instances;
+use crate::ks_language::parser::meta::parse_meta;
+use crate::ks_language::parser::params::parse_params;
+use crate::ks_language::parser::seq::parse_seq;
+use crate::ks_language::parser::types::parse_types;
 use serde_yaml::Value;
 use std::fs::File;
 use std::io::{self, Read};
 
-// KsyParser struct to handle parsing logic
-pub struct KsyParser {
+// KSLanguageParser struct to handle parsing logic
+pub struct KSLanguageParser {
     pub doc: Doc,
     pub doc_ref: DocRef,
     pub enums: Enums,
@@ -30,9 +30,9 @@ pub struct KsyParser {
     pub types: Types,
 }
 
-impl KsyParser {
+impl KSLanguageParser {
     pub fn new() -> Self {
-        KsyParser {
+        KSLanguageParser {
             doc: Doc::new(),
             doc_ref: DocRef::new(),
             enums: Enums::new(),

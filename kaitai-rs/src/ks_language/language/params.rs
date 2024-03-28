@@ -1,8 +1,8 @@
-use crate::kaitaistruct::language::doc::Doc;
-use crate::kaitaistruct::language::doc_ref::DocRef;
-use crate::kaitaistruct::language::enums::Enum;
-use crate::kaitaistruct::language::identifier::Identifier;
-use crate::kaitaistruct::language::kaitai_type::Type;
+use crate::ks_language::language::doc::Doc;
+use crate::ks_language::language::doc_ref::DocRef;
+use crate::ks_language::language::enums::Enum;
+use crate::ks_language::language::identifier::Identifier;
+use crate::ks_language::language::kaitai_type::Type;
 
 /// Params struct representing a list of params specifications
 #[derive(Debug)]

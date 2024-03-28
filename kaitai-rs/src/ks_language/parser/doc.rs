@@ -1,4 +1,4 @@
-use crate::kaitaistruct::language::doc::Doc;
+use crate::ks_language::language::doc::Doc;
 use serde_yaml::Value;
 use std::io;
 

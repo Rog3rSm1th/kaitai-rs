@@ -1,11 +1,11 @@
-use crate::kaitaistruct::language::doc::Doc;
-use crate::kaitaistruct::language::doc_ref::DocRef;
-use crate::kaitaistruct::language::enums::Enums;
-use crate::kaitaistruct::language::instances::Instances;
-use crate::kaitaistruct::language::meta::Meta;
-use crate::kaitaistruct::language::params::Params;
-use crate::kaitaistruct::language::seq::Seq;
-use crate::kaitaistruct::language::types::Types;
+use crate::ks_language::language::doc::Doc;
+use crate::ks_language::language::doc_ref::DocRef;
+use crate::ks_language::language::enums::Enums;
+use crate::ks_language::language::instances::Instances;
+use crate::ks_language::language::meta::Meta;
+use crate::ks_language::language::params::Params;
+use crate::ks_language::language::seq::Seq;
+use crate::ks_language::language::types::Types;
 
 // KsyStruct struct representing the overall structure of a KSY file
 #[allow(dead_code)]

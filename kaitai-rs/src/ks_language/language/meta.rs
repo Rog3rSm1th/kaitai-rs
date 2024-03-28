@@ -1,5 +1,5 @@
 use crate::config::Config;
-use crate::kaitaistruct::language::identifier::Identifier;
+use crate::ks_language::language::identifier::Identifier;
 use crate::utils::validate_values;
 use std::io;
 

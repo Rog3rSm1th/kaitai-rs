@@ -1,4 +1,4 @@
-use crate::kaitaistruct::language::identifier::Identifier;
+use crate::ks_language::language::identifier::Identifier;
 use std::io;
 
 /// Parses the identifier field within the "meta" section

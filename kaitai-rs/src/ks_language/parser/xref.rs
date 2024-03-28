@@ -1,4 +1,4 @@
-use crate::kaitaistruct::language::meta::{
+use crate::ks_language::language::meta::{
     ForensicWiki, JustSolve, LocIdentifier, MIMEType, Meta, PronomIdentifier, RFCIdentifier,
     WikiDataIdentifier, ISO,
 };

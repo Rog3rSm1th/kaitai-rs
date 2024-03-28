@@ -1,14 +1,14 @@
-use crate::kaitaistruct::language::attribute::Attribute;
-use crate::kaitaistruct::language::attribute::Process;
-use crate::kaitaistruct::language::attribute::ProcessType;
-use crate::kaitaistruct::language::attribute::Repeat;
-use crate::kaitaistruct::language::doc::Doc;
-use crate::kaitaistruct::language::doc_ref::DocRef;
-use crate::kaitaistruct::language::identifier::Identifier;
-use crate::kaitaistruct::parser::doc::parse_doc;
-use crate::kaitaistruct::parser::doc_ref::parse_doc_ref;
-use crate::kaitaistruct::parser::identifier::parse_identifier;
-use crate::kaitaistruct::parser::kaitai_type::parse_kaitai_type;
+use crate::ks_language::language::attribute::Attribute;
+use crate::ks_language::language::attribute::Process;
+use crate::ks_language::language::attribute::ProcessType;
+use crate::ks_language::language::attribute::Repeat;
+use crate::ks_language::language::doc::Doc;
+use crate::ks_language::language::doc_ref::DocRef;
+use crate::ks_language::language::identifier::Identifier;
+use crate::ks_language::parser::doc::parse_doc;
+use crate::ks_language::parser::doc_ref::parse_doc_ref;
+use crate::ks_language::parser::identifier::parse_identifier;
+use crate::ks_language::parser::kaitai_type::parse_kaitai_type;
 use serde_yaml::Value;
 use std::io;
 

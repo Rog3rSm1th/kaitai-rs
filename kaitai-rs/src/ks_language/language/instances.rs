@@ -1,5 +1,5 @@
-use crate::kaitaistruct::language::attribute::Attribute;
-use crate::kaitaistruct::language::identifier::Identifier;
+use crate::ks_language::language::attribute::Attribute;
+use crate::ks_language::language::identifier::Identifier;
 use std::collections::HashMap;
 
 /// Instances struct representing a collection of instances

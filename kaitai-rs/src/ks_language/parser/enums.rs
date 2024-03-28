@@ -1,5 +1,5 @@
-use crate::kaitaistruct::language::enums::{Enum, Enums};
-use crate::kaitaistruct::language::identifier::Identifier;
+use crate::ks_language::language::enums::{Enum, Enums};
+use crate::ks_language::language::identifier::Identifier;
 use serde_yaml::Value;
 use std::collections::HashMap;
 use std::io;

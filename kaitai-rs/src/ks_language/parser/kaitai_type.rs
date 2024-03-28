@@ -1,5 +1,5 @@
-use crate::kaitaistruct::language::kaitai_type::PureType;
-use crate::kaitaistruct::language::kaitai_type::Type;
+use crate::ks_language::language::kaitai_type::PureType;
+use crate::ks_language::language::kaitai_type::Type;
 use std::io;
 
 /// Parses a Kaitai type from a string representation.

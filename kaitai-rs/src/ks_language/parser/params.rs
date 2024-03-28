@@ -1,10 +1,10 @@
-use crate::kaitaistruct::language::kaitai_type::Type;
-use crate::kaitaistruct::language::params::ParamSpec;
-use crate::kaitaistruct::language::params::Params;
-use crate::kaitaistruct::parser::doc::parse_doc;
-use crate::kaitaistruct::parser::doc_ref::parse_doc_ref;
-use crate::kaitaistruct::parser::identifier::parse_identifier;
-use crate::kaitaistruct::parser::kaitai_type::parse_kaitai_type;
+use crate::ks_language::language::kaitai_type::Type;
+use crate::ks_language::language::params::ParamSpec;
+use crate::ks_language::language::params::Params;
+use crate::ks_language::parser::doc::parse_doc;
+use crate::ks_language::parser::doc_ref::parse_doc_ref;
+use crate::ks_language::parser::identifier::parse_identifier;
+use crate::ks_language::parser::kaitai_type::parse_kaitai_type;
 use serde_yaml::Value;
 use std::io;
 

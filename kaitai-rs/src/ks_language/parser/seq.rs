@@ -1,5 +1,5 @@
-use crate::kaitaistruct::language::seq::Seq;
-use crate::kaitaistruct::parser::attribute::parse_attribute;
+use crate::ks_language::language::seq::Seq;
+use crate::ks_language::parser::attribute::parse_attribute;
 use serde_yaml::Value;
 use std::io;
 

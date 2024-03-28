@@ -1,7 +1,7 @@
-use crate::kaitaistruct::language::identifier::Identifier;
-use crate::kaitaistruct::language::instances::Instances;
-use crate::kaitaistruct::parser::attribute::parse_attribute;
-use crate::kaitaistruct::parser::identifier::parse_identifier;
+use crate::ks_language::language::identifier::Identifier;
+use crate::ks_language::language::instances::Instances;
+use crate::ks_language::parser::attribute::parse_attribute;
+use crate::ks_language::parser::identifier::parse_identifier;
 
 use serde_yaml::Value;
 use std::io;

@@ -1,7 +1,7 @@
-use crate::kaitaistruct::language::meta::EndianEnum;
-use crate::kaitaistruct::language::meta::Meta;
-use crate::kaitaistruct::parser::identifier::parse_identifier;
-use crate::kaitaistruct::parser::xref::parse_xref;
+use crate::ks_language::language::meta::EndianEnum;
+use crate::ks_language::language::meta::Meta;
+use crate::ks_language::parser::identifier::parse_identifier;
+use crate::ks_language::parser::xref::parse_xref;
 use serde_yaml::Value;
 use std::io;
 

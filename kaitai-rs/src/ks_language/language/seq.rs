@@ -1,4 +1,4 @@
-use crate::kaitaistruct::language::attribute::Attribute;
+use crate::ks_language::language::attribute::Attribute;
 
 /// Seq property struct representing a sequence of attributes
 #[allow(dead_code)]
