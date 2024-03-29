@@ -1,4 +1,5 @@
-use kaitai_rs::kaitaistruct::parser::parser::KsyParser;
+use kaitai_rs::ks_language::format_description::FormatDescription;
+
 use std::env;
 
 fn main() {
@@ -14,14 +15,9 @@ fn main() {
     // Get the file path from the command-line argument
     let file_path = &args[1];
 
-    // Create a new instance of KsyParser
-    let mut parser = KsyParser::new();
+    // Load the format description from the YAML file
+    let format_description = FormatDescription::load_from_file(file_path);
 
-    // Parse YAML file
-    if let Ok(_yaml_value) = parser.parse_yaml(file_path) {
-        // Print the content of the doc_instance
-        // parser.print_struct();
-    } else {
-        println!("Error parsing YAML file");
-    }
+    // Print the parsed format structure
+    format_description.unwrap().format.print_struct();
 }

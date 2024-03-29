@@ -130,5 +130,6 @@ impl KSLanguageParser {
         println!("{:#?}", self.meta);
         println!("{:#?}", self.params);
         println!("{:#?}", self.seq);
+        println!("{:#?}", self.types);
     }
 }
