@@ -73,9 +73,15 @@ pub struct AST<T> {
 }
 
 impl<T> AST<T> {
-    /// Creates a new `AST` with the given root node
-    pub fn new(root: NodeRef<T>) -> AST<T> {
+    /// Creates a new `AST` with an empty root node
+    pub fn new() -> AST<T> {
+        let root = Node::new();
         AST { root }
+    }
+
+    /// Sets the root node of the AST
+    pub fn set_root(&mut self, root: NodeRef<T>) {
+        self.root = root;
     }
 
     /// Gets the root node of the AST

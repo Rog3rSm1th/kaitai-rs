@@ -48,10 +48,11 @@ fn test_node_add_child() {
 
 #[test]
 fn test_ast_new() {
-    // Test creating a new AST with a root Node
-    let root: NodeRef<i32> = Node::new();
-    let ast = AST::new(root.clone());
-    assert_eq!(ast.get_root(), &root);
+    // Test creating a new AST with an empty root Node
+    let ast = AST::<i32>::new();
+    let root = ast.get_root().clone();
+    assert_eq!(root.borrow().get_children().len(), 0);
+    assert_eq!(root.borrow().get_data(), None);
 }
 
 #[test]
@@ -62,7 +63,8 @@ fn test_ast_traverse() {
     let child2: NodeRef<i32> = Node::new();
     root.borrow_mut().add_child(child1.clone());
     root.borrow_mut().add_child(child2.clone());
-    let ast = AST::new(root.clone());
+    let mut ast = AST::new();
+    ast.set_root(root.clone());
     let mut nodes = vec![];
     ast.traverse(|node| nodes.push(node.clone()));
     assert_eq!(nodes.len(), 3);
