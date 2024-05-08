@@ -5,7 +5,7 @@ use crate::ks_language::language::attribute::Attribute;
 #[derive(Debug)]
 pub struct Seq {
     // List of attributes in the sequence
-    attributes: Vec<Attribute>,
+    pub attributes: Vec<Attribute>,
 }
 
 impl Seq {

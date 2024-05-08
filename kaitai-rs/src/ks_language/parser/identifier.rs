@@ -1,7 +1,7 @@
 use crate::ks_language::language::identifier::Identifier;
 use std::io;
 
-/// Parses the identifier field within the "meta" section
+/// Parses an identifier field
 pub fn parse_identifier(
     identifier_instance: &mut Identifier,
     id_str: &str,

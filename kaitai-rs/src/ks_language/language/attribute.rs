@@ -10,7 +10,7 @@ use serde_yaml::Value;
 #[derive(Debug)]
 pub struct Attribute {
     // Identifier for the attribute
-    id: Option<Identifier>,
+    pub id: Option<Identifier>,
     // Documentation for the attribute
     doc: Option<Doc>,
     // Reference to external documentation
@@ -30,7 +30,7 @@ pub struct Attribute {
     // Size of the attribute
     size: Option<String>,
     // Flag indicating whether size is until the end of the stream
-    size_eos: Option<bool>,
+    pub size_eos: bool,
     // Processing details for the attribute
     process: Option<Process>,
     // Enumeration associated with the attribute
@@ -68,7 +68,7 @@ impl Attribute {
         repeat_until: Option<String>,
         optional_if: Option<String>,
         size: Option<String>,
-        size_eos: Option<bool>,
+        size_eos: bool,
         process: Option<Process>,
         attribute_enum: Option<Enum>,
         encoding: Option<String>,
@@ -137,7 +137,7 @@ impl Attribute {
     }
 
     pub fn set_size_eos(&mut self, size_eos: bool) {
-        self.size_eos = Some(size_eos);
+        self.size_eos = size_eos;
     }
 
     pub fn set_process(&mut self, process: Process) {

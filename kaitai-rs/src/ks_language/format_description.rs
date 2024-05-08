@@ -7,6 +7,7 @@ use std::io::Read;
 use std::path::Path;
 
 // Define a struct `FormatDescription` that wraps the `KSLanguageParser`
+#[derive(Debug)]
 pub struct FormatDescription {
     pub format: KSLanguageParser,
 }

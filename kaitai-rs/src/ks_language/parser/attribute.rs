@@ -57,14 +57,14 @@ pub fn parse_attribute(attribute: &Value) -> Result<Attribute, io::Error> {
 
     // Create a new Attribute instance with the parsed values
     let mut new_attribute = Attribute::new(
-        identifier, doc, doc_ref, None, seq_type, None, None, None, None, None, None, None, None,
+        identifier, doc, doc_ref, None, seq_type, None, None, None, None, None, false, None, None,
         None, None, None, true, false, true, None, None, None,
     );
 
     // Define a macro to simplify parsing each attribute field
     macro_rules! parse_attribute_field {
         ($attr:expr, $field_name:literal, $func:ident) => {
-            if let Some(value) = $attr.get($field_name.replace("-", "_")) {
+            if let Some(value) = $attr.get($field_name) {
                 $func(&mut new_attribute, value)?;
             }
         };

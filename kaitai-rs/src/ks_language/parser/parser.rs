@@ -19,6 +19,7 @@ use std::fs::File;
 use std::io::{self, Read};
 
 // KSLanguageParser struct to handle parsing logic
+#[derive(Debug)]
 pub struct KSLanguageParser {
     pub doc: Doc,
     pub doc_ref: DocRef,

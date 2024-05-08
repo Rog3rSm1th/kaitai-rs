@@ -6,6 +6,9 @@ pub type NodeRef<T> = Rc<RefCell<Node<T>>>;
 /// A struct representing a node in an Abstract Syntax Tree (AST)
 #[derive(Debug)]
 pub struct Node<T> {
+    /// The ID of this node in the AST
+    id: Option<String>,
+
     /// The parent of this node in the AST, if any
     parent: Option<NodeRef<T>>,
 
@@ -17,13 +20,19 @@ pub struct Node<T> {
 }
 
 impl<T> Node<T> {
-    /// Creates a new `Node` with no parent, no children, and no data
+    /// Creates a new `Node` with no parent, no children, no data, and no ID
     pub fn new() -> NodeRef<T> {
         Rc::new(RefCell::new(Node {
+            id: None,
             parent: None,
             children: Vec::new(),
             data: None,
         }))
+    }
+
+    /// Sets the node ID
+    pub fn set_id(&mut self, id: String) {
+        self.id = Some(id);
     }
 
     /// Sets the data associated with this node in the AST
@@ -54,6 +63,11 @@ impl<T> Node<T> {
     /// Gets the children of this node in the AST, if any
     pub fn get_children(&self) -> &Vec<NodeRef<T>> {
         &self.children
+    }
+
+    /// Gets the ID of this node in the AST
+    pub fn get_id(&self) -> &Option<String> {
+        &self.id
     }
 }
 
