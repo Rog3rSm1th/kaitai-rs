@@ -21,4 +21,7 @@ fn main() {
         .unwrap()
         .join("./files/bytes_with_io");
     parser.parse_file(path).unwrap();
+
+    // Print the AST
+    println!("{:#?}", parser.ast);
 }

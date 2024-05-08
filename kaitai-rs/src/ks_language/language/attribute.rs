@@ -1,7 +1,6 @@
 use crate::ks_language::language::doc::Doc;
 use crate::ks_language::language::doc_ref::DocRef;
 use crate::ks_language::language::enums::Enum;
-use crate::ks_language::language::identifier::Identifier;
 use crate::ks_language::language::kaitai_type::Type;
 use serde_yaml::Value;
 
@@ -10,7 +9,7 @@ use serde_yaml::Value;
 #[derive(Debug)]
 pub struct Attribute {
     // Identifier for the attribute
-    pub id: Option<Identifier>,
+    pub id: Option<String>,
     // Documentation for the attribute
     doc: Option<Doc>,
     // Reference to external documentation
@@ -58,7 +57,7 @@ pub struct Attribute {
 impl Attribute {
     /// Creates a new Attribute instance.
     pub fn new(
-        id: Option<Identifier>,
+        id: Option<String>,
         doc: Option<Doc>,
         doc_ref: Option<DocRef>,
         contents: Option<Vec<Value>>,

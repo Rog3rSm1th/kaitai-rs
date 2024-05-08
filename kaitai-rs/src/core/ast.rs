@@ -7,7 +7,7 @@ pub type NodeRef<T> = Rc<RefCell<Node<T>>>;
 #[derive(Debug)]
 pub struct Node<T> {
     /// The ID of this node in the AST
-    id: Option<String>,
+    id: String,
 
     /// The parent of this node in the AST, if any
     parent: Option<NodeRef<T>>,
@@ -20,10 +20,10 @@ pub struct Node<T> {
 }
 
 impl<T> Node<T> {
-    /// Creates a new `Node` with no parent, no children, no data, and no ID
-    pub fn new() -> NodeRef<T> {
+    /// Creates a new `Node` with specified initial ID, no parent, no children, no data
+    pub fn new(id: String) -> NodeRef<T> {
         Rc::new(RefCell::new(Node {
-            id: None,
+            id: id,
             parent: None,
             children: Vec::new(),
             data: None,
@@ -32,7 +32,7 @@ impl<T> Node<T> {
 
     /// Sets the node ID
     pub fn set_id(&mut self, id: String) {
-        self.id = Some(id);
+        self.id = id;
     }
 
     /// Sets the data associated with this node in the AST
@@ -66,7 +66,7 @@ impl<T> Node<T> {
     }
 
     /// Gets the ID of this node in the AST
-    pub fn get_id(&self) -> &Option<String> {
+    pub fn get_id(&self) -> &String {
         &self.id
     }
 }
@@ -87,9 +87,9 @@ pub struct AST<T> {
 }
 
 impl<T> AST<T> {
-    /// Creates a new `AST` with an empty root node
+    /// Creates a new `AST` with an empty root node identified by the ID "root"
     pub fn new() -> AST<T> {
-        let root = Node::new();
+        let root = Node::new("root".to_string());
         AST { root }
     }
 

@@ -10,7 +10,7 @@ use std::path::Path;
 #[allow(dead_code)]
 pub struct KaitaiStruct {
     data: Vec<u8>,
-    ast: AST<Vec<u8>>,
+    pub ast: AST<Vec<u8>>,
     format_description: FormatDescription,
 }
 
@@ -40,14 +40,19 @@ impl KaitaiStruct {
 
     /// Parses the data and convert it into an AST
     /// For now it's just a naive implementation that only parses top-level attributes
-    /// TODO : Step-by-step improvements to manage more and more features ;)
-    fn parse_data(&mut self) -> () {
+    /// TODO : Step-by-step improvements to manage more and more features
+    fn parse_data(&mut self) {
         let mut root_node = self.ast.get_root().borrow_mut();
 
         // Start by parsing top-level elements
         let top_level_seq = &self.format_description.format.seq;
         for attribute in &top_level_seq.attributes {
-            let attribute_node = Node::<Vec<u8>>::new();
+            // Create the attribute node with ID
+            let attribute_id = match &attribute.id {
+                Some(id) => id.clone(),
+                None => "default_id".to_string(),
+            };
+            let attribute_node = Node::<Vec<u8>>::new(attribute_id);
             let mut attribute_node_borrowed = attribute_node.borrow_mut();
 
             // if size-eos is enabled, we read all the bytes till the end of the stream

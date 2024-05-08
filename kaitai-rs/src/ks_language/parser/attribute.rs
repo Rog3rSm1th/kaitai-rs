@@ -4,10 +4,8 @@ use crate::ks_language::language::attribute::ProcessType;
 use crate::ks_language::language::attribute::Repeat;
 use crate::ks_language::language::doc::Doc;
 use crate::ks_language::language::doc_ref::DocRef;
-use crate::ks_language::language::identifier::Identifier;
 use crate::ks_language::parser::doc::parse_doc;
 use crate::ks_language::parser::doc_ref::parse_doc_ref;
-use crate::ks_language::parser::identifier::parse_identifier;
 use crate::ks_language::parser::kaitai_type::parse_kaitai_type;
 use serde_yaml::Value;
 use std::io;
@@ -16,10 +14,7 @@ use std::io;
 pub fn parse_attribute(attribute: &Value) -> Result<Attribute, io::Error> {
     // Check if the "id" field exists before parsing it
     let identifier = if let Some(id_value) = attribute.get("id").and_then(|value| value.as_str()) {
-        let mut identifier = Identifier::new();
-        parse_identifier(&mut identifier, id_value)?;
-
-        Some(identifier)
+        Some(id_value.to_string())
     } else {
         None
     };
