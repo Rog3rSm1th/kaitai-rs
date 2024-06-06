@@ -8,7 +8,7 @@ fn main() {
         Path::new(file!())
             .parent()
             .unwrap()
-            .join("./../../kaitai_struct_formats/common/bytes_with_io.ksy")
+            .join("./../../kaitai_struct_formats/executable/android_nanoapp_header.ksy")
             .to_str()
             .unwrap(),
     )
@@ -19,7 +19,7 @@ fn main() {
     let path = Path::new(file!())
         .parent()
         .unwrap()
-        .join("./files/bytes_with_io");
+        .join("./files/activity.napp_header");
     parser.parse_file(path).unwrap();
 
     // Print the AST

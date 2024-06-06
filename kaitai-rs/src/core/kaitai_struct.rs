@@ -1,6 +1,8 @@
 use crate::core::ast::Node;
 use crate::core::ast::AST;
 use crate::ks_language::format_description::FormatDescription;
+use crate::ks_language::language::kaitai_type::parse_unsigned_integer;
+use crate::ks_language::language::kaitai_type::PureType;
 
 use std::fs::File;
 use std::io::Read;
@@ -44,6 +46,9 @@ impl KaitaiStruct {
     fn parse_data(&mut self) {
         let mut root_node = self.ast.get_root().borrow_mut();
 
+        // Keep track of the current offset in the data
+        let mut data_offset = 0;
+
         // Start by parsing top-level elements
         let top_level_seq = &self.format_description.format.seq;
         for attribute in &top_level_seq.attributes {
@@ -59,6 +64,23 @@ impl KaitaiStruct {
             if attribute.size_eos {
                 let data_clone = self.data.clone();
                 attribute_node_borrowed.set_data(data_clone);
+            }
+            // Check if seq_type attribute
+            else if let Some(seq_type) = &attribute.seq_type {
+                match &seq_type.pure_type {
+                    PureType::UnsignedInteger(size) => {
+                        // Parse the data as an unsigned integer of the given size
+                        let value =
+                            parse_unsigned_integer(&self.data[data_offset..], *size as usize);
+                        attribute_node_borrowed.set_data(value);
+                        // Advance the data offset
+                        data_offset += *size as usize;
+                    }
+                    _ => {
+                        // TODO: Implement parsing logic for other types
+                        todo!();
+                    }
+                }
             }
 
             // Create the top-level element node

@@ -17,7 +17,7 @@ pub struct Attribute {
     // Contents of the attribute
     contents: Option<Vec<Value>>,
     // TODO: Implement type system
-    seq_type: Option<Type>,
+    pub seq_type: Option<Type>,
     // Repeat settings for the attribute
     repeat: Option<Repeat>,
     // Expression for the number of repetitions
