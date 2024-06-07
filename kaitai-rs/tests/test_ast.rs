@@ -10,7 +10,7 @@ use kaitai_rs::core::ast::AST;
 #[test]
 fn test_node_new() {
     // Test creating a new Node with no parent, children, or data
-    let node: NodeRef<i32> = Node::new();
+    let node: NodeRef<i32> = Node::new("test_node".to_string());
     assert!(node.borrow().get_parent().is_none());
     assert_eq!(node.borrow().get_children().len(), 0);
     assert!(node.borrow().get_data().is_none());
@@ -19,7 +19,7 @@ fn test_node_new() {
 #[test]
 fn test_node_set_data() {
     // Test setting data on a Node
-    let node: NodeRef<i32> = Node::new();
+    let node: NodeRef<i32> = Node::new("test_node".to_string());
     node.borrow_mut().set_data(42);
     assert_eq!(node.borrow().get_data(), Some(&42));
 }
@@ -27,8 +27,8 @@ fn test_node_set_data() {
 #[test]
 fn test_node_set_parent() {
     // Test setting the parent of a Node
-    let parent: NodeRef<i32> = Node::new();
-    let child: NodeRef<i32> = Node::new();
+    let parent: NodeRef<i32> = Node::new("test_node".to_string());
+    let child: NodeRef<i32> = Node::new("test_child_node".to_string());
     child.borrow_mut().set_parent(parent.clone());
     assert_eq!(child.borrow().get_parent(), Some(&parent));
 }
@@ -36,9 +36,9 @@ fn test_node_set_parent() {
 #[test]
 fn test_node_add_child() {
     // Test adding children to a Node
-    let parent: NodeRef<i32> = Node::new();
-    let child1: NodeRef<i32> = Node::new();
-    let child2: NodeRef<i32> = Node::new();
+    let parent: NodeRef<i32> = Node::new("test_node".to_string());
+    let child1: NodeRef<i32> = Node::new("test_child1_node".to_string());
+    let child2: NodeRef<i32> = Node::new("test_child2_node".to_string());
     parent.borrow_mut().add_child(child1.clone());
     parent.borrow_mut().add_child(child2.clone());
     assert_eq!(parent.borrow().get_children().len(), 2);
@@ -58,9 +58,9 @@ fn test_ast_new() {
 #[test]
 fn test_ast_traverse() {
     // Test traversing an AST in depth-first order
-    let root: NodeRef<i32> = Node::new();
-    let child1: NodeRef<i32> = Node::new();
-    let child2: NodeRef<i32> = Node::new();
+    let root: NodeRef<i32> = Node::new("test_node".to_string());
+    let child1: NodeRef<i32> = Node::new("test_child1_node".to_string());
+    let child2: NodeRef<i32> = Node::new("test_child2_node".to_string());
     root.borrow_mut().add_child(child1.clone());
     root.borrow_mut().add_child(child2.clone());
     let mut ast = AST::new();
