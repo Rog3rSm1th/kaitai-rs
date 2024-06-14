@@ -65,7 +65,7 @@ impl KaitaiStruct {
                 let data_clone = self.data.clone();
                 attribute_node_borrowed.set_data(data_clone);
             }
-            // Check if seq_type attribute
+            // If seq_type attribute
             else if let Some(seq_type) = &attribute.seq_type {
                 match &seq_type.pure_type {
                     PureType::UnsignedInteger(size) => {
@@ -81,6 +81,11 @@ impl KaitaiStruct {
                         todo!();
                     }
                 }
+            }
+            // If contents attribute
+            else if let Some(content) = &attribute.contents {
+                // Set the data of the attribute node with the contents field data
+                attribute_node_borrowed.set_data(content.clone());
             }
 
             // Create the top-level element node

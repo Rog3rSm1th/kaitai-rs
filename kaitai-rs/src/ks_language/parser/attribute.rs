@@ -87,22 +87,57 @@ pub fn parse_attribute(attribute: &Value) -> Result<Attribute, io::Error> {
     Ok(new_attribute)
 }
 
-// Parses the "contents" attribute of an Attribute instance from the provided Value
+/// Parses the "contents" attribute of an Attribute instance from the provided Value
+///
+/// Contents can be:
+///   - A string: "String"
+///   - A sequence of strings and/or integers: ["FILE", 0, 0, 0, 4, "PFF2"]
+///
+/// The aim of this function is to convert it to a Vec<u8> in order to put it in the attribute instance contents field
 pub fn parse_contents(
     attribute_instance: &mut Attribute,
     contents_value: &Value,
 ) -> Result<(), io::Error> {
+    // Match contents_value to determine its type
     let contents = match contents_value {
+        // If contents_value is a sequence of values
         Value::Sequence(seq) => {
             let mut contents_vec = Vec::new();
+            // Iterate over each value in the sequence
             for value in seq {
-                contents_vec.push(value.clone());
+                match value {
+                    // If the value is a string, convert it to bytes and add to contents_vec
+                    Value::String(s) => {
+                        contents_vec.extend_from_slice(s.as_bytes());
+                    }
+                    // If the value is a number, attempt to convert it to u8 and add to contents_vec
+                    Value::Number(num) => {
+                        if let Some(byte_val) = num
+                            .as_u64()
+                            .and_then(|num| TryInto::<u8>::try_into(num).ok())
+                        {
+                            contents_vec.push(byte_val);
+                        } else {
+                            // Panic if conversion to u8 fails
+                            panic!("Failed to convert value {:?} to u8", num);
+                        }
+                    }
+                    // Handle unsupported types in the sequence
+                    _ => {
+                        panic!("Unsupported sequence element {:?}", value);
+                    }
+                }
             }
+
             Some(contents_vec)
         }
+        // If contents_value is a string, convert it to Vec<u8> and wrap in Some
+        Value::String(s) => Some(s.bytes().collect::<Vec<u8>>()),
+        // Return None for unsupported types
         _ => None,
     };
 
+    // If contents is Some, set it as the contents of attribute_instance
     if let Some(contents) = contents {
         attribute_instance.set_contents(contents);
     }

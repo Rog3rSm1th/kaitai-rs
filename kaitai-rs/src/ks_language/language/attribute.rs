@@ -2,7 +2,6 @@ use crate::ks_language::language::doc::Doc;
 use crate::ks_language::language::doc_ref::DocRef;
 use crate::ks_language::language::enums::Enum;
 use crate::ks_language::language::kaitai_type::Type;
-use serde_yaml::Value;
 
 // Attribute struct definition
 #[allow(dead_code)]
@@ -15,7 +14,7 @@ pub struct Attribute {
     // Reference to external documentation
     doc_ref: Option<DocRef>,
     // Contents of the attribute
-    contents: Option<Vec<Value>>,
+    pub contents: Option<Vec<u8>>,
     // TODO: Implement type system
     pub seq_type: Option<Type>,
     // Repeat settings for the attribute
@@ -60,7 +59,7 @@ impl Attribute {
         id: Option<String>,
         doc: Option<Doc>,
         doc_ref: Option<DocRef>,
-        contents: Option<Vec<Value>>,
+        contents: Option<Vec<u8>>,
         seq_type: Option<Type>,
         repeat: Option<Repeat>,
         repeat_expr: Option<String>,
@@ -107,7 +106,7 @@ impl Attribute {
     }
 
     /// Setters for the attribute fields
-    pub fn set_contents(&mut self, contents: Vec<Value>) {
+    pub fn set_contents(&mut self, contents: Vec<u8>) {
         self.contents = Some(contents);
     }
 
