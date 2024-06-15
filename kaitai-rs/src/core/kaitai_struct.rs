@@ -49,32 +49,30 @@ impl KaitaiStruct {
         // Keep track of the current offset in the data
         let mut data_offset = 0;
 
-        // Start by parsing top-level elements
-        let top_level_seq = &self.format_description.format.seq;
-        for attribute in &top_level_seq.attributes {
-            // Create the attribute node with ID
-            let attribute_id = match &attribute.id {
-                Some(id) => id.clone(),
-                None => "default_id".to_string(),
-            };
-            let attribute_node = Node::<Vec<u8>>::new(attribute_id);
+        // Iterate through top-level attributes defined in the format description
+        for attribute in &self.format_description.format.seq.attributes {
+            // Init the attribute node
+            // We use a default ID that is replaced afterwards
+            let attribute_id = attribute
+                .id
+                .clone()
+                .unwrap_or_else(|| "default_id".to_string());
+            let attribute_node = Node::<Vec<u8>>::new(attribute_id.clone());
             let mut attribute_node_borrowed = attribute_node.borrow_mut();
 
-            // if size-eos is enabled, we read all the bytes till the end of the stream
+            // Handle attributes with size-eos enabled
             if attribute.size_eos {
-                let data_clone = self.data.clone();
-                attribute_node_borrowed.set_data(data_clone);
+                attribute_node_borrowed.set_data(self.data.clone());
             }
-            // If seq_type attribute
+            // If seq_type attribute exists
             else if let Some(seq_type) = &attribute.seq_type {
                 match &seq_type.pure_type {
                     PureType::UnsignedInteger(size) => {
-                        // Parse the data as an unsigned integer of the given size
+                        // Parse data as an unsigned integer of the given size
                         let value =
                             parse_unsigned_integer(&self.data[data_offset..], *size as usize);
                         attribute_node_borrowed.set_data(value);
-                        // Advance the data offset
-                        data_offset += *size as usize;
+                        data_offset += *size as usize; // Advance data offset
                     }
                     _ => {
                         // TODO: Implement parsing logic for other types
@@ -82,15 +80,14 @@ impl KaitaiStruct {
                     }
                 }
             }
-            // If contents attribute
+            // If contents attribute exists
             else if let Some(content) = &attribute.contents {
-                // Set the data of the attribute node with the contents field data
+                // Set data of the attribute node with the contents field data
                 attribute_node_borrowed.set_data(content.clone());
             }
 
-            // Create the top-level element node
-            let attribute_node_clone = attribute_node.clone();
-            root_node.add_child(attribute_node_clone);
+            // Add the attribute node to the root node
+            root_node.add_child(attribute_node.clone());
         }
     }
 
