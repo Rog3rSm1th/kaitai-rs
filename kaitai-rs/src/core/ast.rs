@@ -19,7 +19,7 @@ pub struct Node<T> {
     data: Option<T>,
 }
 
-impl<T> Node<T> {
+impl<T: Clone> Node<T> {
     /// Creates a new `Node` with specified initial ID, no parent, no children, no data
     pub fn new(id: String) -> NodeRef<T> {
         Rc::new(RefCell::new(Node {
@@ -69,6 +69,18 @@ impl<T> Node<T> {
     pub fn get_id(&self) -> &String {
         &self.id
     }
+
+    /// Recursively gets data from the children of this node in the AST
+    pub fn get_data_from_children(&self) -> Vec<T> {
+        let mut data = Vec::new();
+        for child in &self.children {
+            if let Some(child_data) = child.borrow().get_data().cloned() {
+                data.push(child_data);
+            }
+            data.extend(child.borrow().get_data_from_children());
+        }
+        data
+    }
 }
 
 impl<T: PartialEq> PartialEq for Node<T> {
@@ -86,7 +98,7 @@ pub struct AST<T> {
     root: NodeRef<T>,
 }
 
-impl<T> AST<T> {
+impl<T: std::clone::Clone> AST<T> {
     /// Creates a new `AST` with an empty root node identified by the ID "root"
     pub fn new() -> AST<T> {
         let root = Node::new("root".to_string());
