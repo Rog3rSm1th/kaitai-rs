@@ -33,7 +33,7 @@ fn test_node_get_data_from_children() {
     // We also add grandchildren to test the recursive property of get_data_from_children method
     let grandchild1: NodeRef<i32> = Node::new("test_grandchild1_node".to_string());
     let grandchild2: NodeRef<i32> = Node::new("test_grandchild2_node".to_string());
-    
+
     child1.borrow_mut().add_child(grandchild1.clone());
     child2.borrow_mut().add_child(grandchild2.clone());
     parent.borrow_mut().add_child(child1.clone());
