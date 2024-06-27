@@ -1,8 +1,8 @@
 use crate::core::ast::Node;
 use crate::core::ast::AST;
 use crate::ks_language::format_description::FormatDescription;
-use crate::ks_language::language::kaitai_type::parse_unsigned_integer;
 use crate::ks_language::language::kaitai_type::PureType;
+use crate::ks_language::language::kaitai_type::{parse_strz, parse_unsigned_integer};
 
 use std::fs::File;
 use std::io::Read;
@@ -73,6 +73,19 @@ impl KaitaiStruct {
                             parse_unsigned_integer(&self.data[data_offset..], *size as usize);
                         attribute_node_borrowed.set_data(value);
                         data_offset += *size as usize; // Advance data offset
+                    }
+                    PureType::StringZ => {
+                        // Convert attribute size from Option<String> to Option<usize>
+                        // TODO : resolve expressions as integer size 
+                        let size = attribute.size.as_ref().and_then(|s| s.parse::<usize>().ok());
+                    
+                        // Parse data as a null-terminated string (StringZ)
+                        // TODO : Allow custom terminators
+                        let string_data = parse_strz(&self.data[data_offset..], size);
+                        attribute_node_borrowed.set_data(string_data.clone());
+                    
+                        // Advance data offset by the length of the parsed string
+                        data_offset += string_data.len();
                     }
                     _ => {
                         // TODO: Implement parsing logic for other types

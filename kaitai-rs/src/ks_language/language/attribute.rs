@@ -26,7 +26,7 @@ pub struct Attribute {
     // Mark the attribute as optional
     optional_if: Option<String>,
     // Size of the attribute
-    size: Option<String>,
+    pub size: Option<String>,
     // Flag indicating whether size is until the end of the stream
     pub size_eos: bool,
     // Processing details for the attribute

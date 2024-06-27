@@ -34,6 +34,7 @@ pub fn parse_kaitai_type(type_str: &str) -> Result<Type, io::Error> {
             "f8" => PureType::FloatingPoint(8),
             "bool" | "b1" => PureType::Boolean,
             "str" => PureType::String,
+            "strz" => PureType::StringZ,
             "struct" => PureType::ArbitraryStruct,
             "io" => PureType::IOStream,
             "any" => PureType::AnyType,
