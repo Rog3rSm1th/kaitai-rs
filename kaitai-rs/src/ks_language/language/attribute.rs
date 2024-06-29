@@ -38,7 +38,7 @@ pub struct Attribute {
     // Padding size to the right
     pad_right: Option<u8>,
     // string or byte array reading will stop when it encounters this byte
-    terminator: Option<u8>,
+    pub terminator: Option<u8>,
     // Flag indicating whether to consume the attribute
     consume: bool,
     // Flag indicating whether to include the attribute in output

@@ -35,10 +35,9 @@ pub fn parse_unsigned_integer(data: &[u8], size: usize) -> Vec<u8> {
     result
 }
 
-/// Parses a null-terminated string (StringZ) from the given data slice
-/// Returns the parsed string as a Vec<u8>
-/// TODO : Add a terminator parameter
-pub fn parse_strz(data: &[u8], size: Option<usize>) -> Vec<u8> {
+/// Parses a null-terminated string (or with a custom terminator)
+/// Returns the parsed string as a Vec<u8> up to and including the terminator or the specified size, whichever comes first
+pub fn parse_strz(data: &[u8], size: Option<usize>, terminator: u8) -> Vec<u8> {
     let mut end_pos = data.len(); // Default to the entire length of the data
 
     // Check for the specified size and adjust end_pos if it is smaller
@@ -49,9 +48,9 @@ pub fn parse_strz(data: &[u8], size: Option<usize>) -> Vec<u8> {
     }
 
     // Check for the terminator and adjust end_pos if it is found earlier
-    if let Some(null_terminator_pos) = data.iter().position(|&x| x == 0) {
-        if null_terminator_pos < end_pos {
-            end_pos = null_terminator_pos + 1; // Include the terminator
+    if let Some(terminator_pos) = data.iter().position(|&x| x == terminator) {
+        if terminator_pos < end_pos {
+            end_pos = terminator_pos + 1; // Include the terminator
         }
     }
 

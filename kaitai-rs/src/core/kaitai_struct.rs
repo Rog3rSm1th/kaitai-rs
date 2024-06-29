@@ -76,14 +76,19 @@ impl KaitaiStruct {
                     }
                     PureType::StringZ => {
                         // Convert attribute size from Option<String> to Option<usize>
-                        // TODO : resolve expressions as integer size 
-                        let size = attribute.size.as_ref().and_then(|s| s.parse::<usize>().ok());
-                    
+                        // TODO: resolve expressions as integer size
+                        let size = attribute
+                            .size
+                            .as_ref()
+                            .and_then(|s| s.parse::<usize>().ok());
+
+                        // Determine the terminator, defaulting to null byte if not specified
+                        let terminator = attribute.terminator.unwrap_or(0);
+
                         // Parse data as a null-terminated string (StringZ)
-                        // TODO : Allow custom terminators
-                        let string_data = parse_strz(&self.data[data_offset..], size);
+                        let string_data = parse_strz(&self.data[data_offset..], size, terminator);
                         attribute_node_borrowed.set_data(string_data.clone());
-                    
+
                         // Advance data offset by the length of the parsed string
                         data_offset += string_data.len();
                     }
