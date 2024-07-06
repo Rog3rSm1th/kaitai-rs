@@ -1,0 +1,47 @@
+/// Pest grammar for the kaitai expression language
+/// https://doc.kaitai.io/user_guide.html#_expression_language
+
+/// TODO :
+/// - Strings
+/// - Ternary (if-then-else) operator
+/// - Methods
+/// - Streams
+
+// Identifier
+identifier = { 'a'..'z' ~ ('a'..'z' | '0'..'9')+ } 
+
+// Operators
+arithmetic_operator = { "+" | "-" | "/" | "*" | "%" }
+relational_operator = { "<" | "<=" | ">" | ">=" | "==" | "!=" }
+bitwise_operator    = { "<<" | ">>" | "&" | "|" | "^" }
+logical_operator    = { "not" | "and" | "or" }
+
+// integers
+visual_separator = _{ "_" }
+hex_integer      = _{ "0" ~ ("x" | "X") ~ (ASCII_HEX_DIGIT ~ visual_separator?)+ }
+bin_integer      = _{ "0" ~ ("b" | "B") ~ (ASCII_BIN_DIGIT ~ visual_separator?)+ }
+octal_integer    = _{ "0" ~ ("o" | "O") ~ (ASCII_OCT_DIGIT ~ visual_separator?)+ }
+integer          =  { hex_integer | bin_integer | octal_integer | ("-"? ~ DECIMAL_NUMBER+) }
+
+// Float
+exponent                = _{ ("e" | "E") ~ ("-" | "+")? ~ DECIMAL_NUMBER+ }
+float                   = _{ "-"? ~ DECIMAL_NUMBER* ~ "." ~ DECIMAL_NUMBER+ }
+exponent_notation_float =  { float ~ exponent }
+floating_point_number   =  { exponent_notation_float | float }
+
+// Booleans
+boolean = { "true" | "false" }
+
+// Array
+integer_array = { "[" ~ (integer ~ ",")* ~ integer ~ "]" }
+boolean_array = { "[" ~ (boolean ~ ",")* ~ boolean ~ "]" }
+float_array   = { "[" ~ (floating_point_number ~ ",")* ~ floating_point_number ~ "]" }
+array         = { integer_array | boolean_array | float_array }
+
+// Litteral
+litteral = { identifier | floating_point_number | integer | boolean | array }
+
+// User-defined types
+user_defined_type = { "_root" | "_parent" | "io" }
+
+WHITESPACE = _{ " " | "\t" }
