@@ -96,3 +96,28 @@ fn test_ast_traverse() {
     assert_eq!(nodes[1], child1);
     assert_eq!(nodes[2], child2);
 }
+
+#[test]
+// Test getting a node by ID
+fn test_ast_get_node_by_id() {
+    let root: NodeRef<i32> = Node::new("root".to_string());
+    let child1: NodeRef<i32> = Node::new("child1".to_string());
+    let child2: NodeRef<i32> = Node::new("child2".to_string());
+    let grandchild1: NodeRef<i32> = Node::new("grandchild1".to_string());
+    let grandchild2: NodeRef<i32> = Node::new("grandchild2".to_string());
+
+    child1.borrow_mut().add_child(grandchild1.clone());
+    child2.borrow_mut().add_child(grandchild2.clone());
+    root.borrow_mut().add_child(child1.clone());
+    root.borrow_mut().add_child(child2.clone());
+
+    let mut ast = AST::new();
+    ast.set_root(root.clone());
+
+    assert_eq!(ast.get_node_by_id("root"), Some(root.clone()));
+    assert_eq!(ast.get_node_by_id("child1"), Some(child1.clone()));
+    assert_eq!(ast.get_node_by_id("child2"), Some(child2.clone()));
+    assert_eq!(ast.get_node_by_id("grandchild1"), Some(grandchild1.clone()));
+    assert_eq!(ast.get_node_by_id("grandchild2"), Some(grandchild2.clone()));
+    assert_eq!(ast.get_node_by_id("nonexistent"), None);
+}

@@ -115,6 +115,18 @@ impl<T: std::clone::Clone> AST<T> {
         &self.root
     }
 
+    /// Searches for a node with the given ID in the AST and returns it if found
+    pub fn get_node_by_id(&self, id: &str) -> Option<NodeRef<T>> {
+        let mut stack = vec![self.root.clone()];
+        while let Some(node) = stack.pop() {
+            if node.borrow().get_id() == id {
+                return Some(node.clone());
+            }
+            stack.extend(node.borrow().get_children().iter().cloned().rev());
+        }
+        None
+    }
+
     /// Performs a depth-first traversal of the AST, calling the given closure on each node
     pub fn traverse<F>(&self, mut f: F)
     where
