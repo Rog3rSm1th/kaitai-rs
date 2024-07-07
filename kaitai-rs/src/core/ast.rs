@@ -1,6 +1,8 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use crate::core::expression::ExpressionInterpreter;
+
 pub type NodeRef<T> = Rc<RefCell<Node<T>>>;
 
 /// A struct representing a node in an Abstract Syntax Tree (AST)
@@ -96,13 +98,20 @@ impl<T: PartialEq> PartialEq for Node<T> {
 pub struct AST<T> {
     /// The root node of the AST
     root: NodeRef<T>,
+    // The kaitai expression language interpreter
+    #[allow(dead_code)]
+    expression_interpreter: ExpressionInterpreter,
 }
 
 impl<T: std::clone::Clone> AST<T> {
     /// Creates a new `AST` with an empty root node identified by the ID "root"
     pub fn new() -> AST<T> {
         let root = Node::new("root".to_string());
-        AST { root }
+        let expression_interpreter = ExpressionInterpreter::new();
+        AST {
+            root,
+            expression_interpreter,
+        }
     }
 
     /// Sets the root node of the AST
