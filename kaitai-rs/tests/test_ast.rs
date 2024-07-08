@@ -114,10 +114,25 @@ fn test_ast_get_node_by_id() {
     let mut ast = AST::new();
     ast.set_root(root.clone());
 
-    assert_eq!(ast.get_node_by_id("root"), Some(root.clone()));
-    assert_eq!(ast.get_node_by_id("child1"), Some(child1.clone()));
-    assert_eq!(ast.get_node_by_id("child2"), Some(child2.clone()));
-    assert_eq!(ast.get_node_by_id("grandchild1"), Some(grandchild1.clone()));
-    assert_eq!(ast.get_node_by_id("grandchild2"), Some(grandchild2.clone()));
+    assert_eq!(
+        ast.get_node_by_id("root"),
+        Some(root.clone().borrow().clone())
+    );
+    assert_eq!(
+        ast.get_node_by_id("child1"),
+        Some(child1.clone().borrow().clone())
+    );
+    assert_eq!(
+        ast.get_node_by_id("child2"),
+        Some(child2.clone().borrow().clone())
+    );
+    assert_eq!(
+        ast.get_node_by_id("grandchild1"),
+        Some(grandchild1.clone().borrow().clone())
+    );
+    assert_eq!(
+        ast.get_node_by_id("grandchild2"),
+        Some(grandchild2.clone().borrow().clone())
+    );
     assert_eq!(ast.get_node_by_id("nonexistent"), None);
 }

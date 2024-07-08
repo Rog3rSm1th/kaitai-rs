@@ -18,9 +18,9 @@ pub struct Attribute {
     // TODO: Implement type system
     pub seq_type: Option<Type>,
     // Repeat settings for the attribute
-    repeat: Option<Repeat>,
+    pub repeat: Option<Repeat>,
     // Expression for the number of repetitions
-    repeat_expr: Option<String>,
+    pub repeat_expr: Option<String>,
     // TODO: Implement the repeat_until parser & engine
     repeat_until: Option<String>,
     // Mark the attribute as optional

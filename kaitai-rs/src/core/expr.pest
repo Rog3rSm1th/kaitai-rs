@@ -38,8 +38,8 @@ boolean_array = { "[" ~ (boolean ~ ",")* ~ boolean ~ "]" }
 float_array   = { "[" ~ (floating_point_number ~ ",")* ~ floating_point_number ~ "]" }
 array         = { integer_array | boolean_array | float_array }
 
-// Litteral
-litteral = { identifier | floating_point_number | integer | boolean | array }
+// Literal
+literal = { identifier | floating_point_number | integer | boolean | array }
 
 // User-defined types
 user_defined_type = { "_root" | "_parent" | "io" }

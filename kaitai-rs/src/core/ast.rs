@@ -1,8 +1,6 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use crate::core::expression::ExpressionInterpreter;
-
 pub type NodeRef<T> = Rc<RefCell<Node<T>>>;
 
 /// A struct representing a node in an Abstract Syntax Tree (AST)
@@ -85,6 +83,18 @@ impl<T: Clone> Node<T> {
     }
 }
 
+/// Implement the Clone trait for Node struct
+impl<T: Clone> Clone for Node<T> {
+    fn clone(&self) -> Self {
+        Node {
+            id: self.id.clone(),
+            parent: self.parent.clone(),
+            children: self.children.iter().cloned().collect(),
+            data: self.data.clone(),
+        }
+    }
+}
+
 impl<T: PartialEq> PartialEq for Node<T> {
     /// Compares two `Node` instances for equality.
     fn eq(&self, other: &Self) -> bool {
@@ -94,24 +104,17 @@ impl<T: PartialEq> PartialEq for Node<T> {
 }
 
 /// A struct representing an Abstract Syntax Tree (AST)
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct AST<T> {
     /// The root node of the AST
     root: NodeRef<T>,
-    // The kaitai expression language interpreter
-    #[allow(dead_code)]
-    expression_interpreter: ExpressionInterpreter,
 }
 
-impl<T: std::clone::Clone> AST<T> {
+impl<T: Clone> AST<T> {
     /// Creates a new `AST` with an empty root node identified by the ID "root"
     pub fn new() -> AST<T> {
         let root = Node::new("root".to_string());
-        let expression_interpreter = ExpressionInterpreter::new();
-        AST {
-            root,
-            expression_interpreter,
-        }
+        AST { root }
     }
 
     /// Sets the root node of the AST
@@ -125,14 +128,31 @@ impl<T: std::clone::Clone> AST<T> {
     }
 
     /// Searches for a node with the given ID in the AST and returns it if found
-    pub fn get_node_by_id(&self, id: &str) -> Option<NodeRef<T>> {
+    ///
+    /// This function performs a depth-first search (DFS) starting from the root node,
+    /// looking for a node with a matching ID. If such a node is found, it returns
+    /// a cloned instance of that node. Otherwise, it returns `None`
+    pub fn get_node_by_id(&self, id: &str) -> Option<Node<T>> {
+        // Initialize a stack for DFS with the root node
         let mut stack = vec![self.root.clone()];
-        while let Some(node) = stack.pop() {
-            if node.borrow().get_id() == id {
+
+        // Continue processing until the stack is empty
+        while let Some(node_ref) = stack.pop() {
+            // Borrow the node inside the RefCell to access its fields
+            let node = node_ref.borrow();
+
+            // Check if the current node's ID matches the target ID
+            if node.get_id() == id {
+                // If a match is found, return a clone of the node
                 return Some(node.clone());
             }
-            stack.extend(node.borrow().get_children().iter().cloned().rev());
+
+            // If no match, extend the stack with the children of the current node
+            // Cloning the child references to maintain stack ownership
+            stack.extend(node.children.iter().cloned().rev());
         }
+
+        // If no matching node is found, return None
         None
     }
 
