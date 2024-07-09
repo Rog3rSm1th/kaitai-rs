@@ -7,7 +7,7 @@ pub type NodeRef<T> = Rc<RefCell<Node<T>>>;
 #[derive(Debug)]
 pub struct Node<T> {
     /// The ID of this node in the AST
-    id: String,
+    id: Option<String>,
 
     /// The parent of this node in the AST, if any
     parent: Option<NodeRef<T>>,
@@ -21,9 +21,9 @@ pub struct Node<T> {
 
 impl<T: Clone> Node<T> {
     /// Creates a new `Node` with specified initial ID, no parent, no children, no data
-    pub fn new(id: String) -> NodeRef<T> {
+    pub fn new(id: Option<String>) -> NodeRef<T> {
         Rc::new(RefCell::new(Node {
-            id: id,
+            id,
             parent: None,
             children: Vec::new(),
             data: None,
@@ -31,7 +31,7 @@ impl<T: Clone> Node<T> {
     }
 
     /// Sets the node ID
-    pub fn set_id(&mut self, id: String) {
+    pub fn set_id(&mut self, id: Option<String>) {
         self.id = id;
     }
 
@@ -57,6 +57,7 @@ impl<T: Clone> Node<T> {
 
     /// Adds a child to this node in the AST
     pub fn add_child(&mut self, child: NodeRef<T>) {
+        // Add the child to the children list
         self.children.push(child);
     }
 
@@ -66,7 +67,7 @@ impl<T: Clone> Node<T> {
     }
 
     /// Gets the ID of this node in the AST
-    pub fn get_id(&self) -> &String {
+    pub fn get_id(&self) -> &Option<String> {
         &self.id
     }
 
@@ -113,7 +114,7 @@ pub struct AST<T> {
 impl<T: Clone> AST<T> {
     /// Creates a new `AST` with an empty root node identified by the ID "root"
     pub fn new() -> AST<T> {
-        let root = Node::new("root".to_string());
+        let root = Node::new(Some("root".to_string()));
         AST { root }
     }
 
@@ -142,9 +143,11 @@ impl<T: Clone> AST<T> {
             let node = node_ref.borrow();
 
             // Check if the current node's ID matches the target ID
-            if node.get_id() == id {
-                // If a match is found, return a clone of the node
-                return Some(node.clone());
+            if let Some(node_id) = &node.get_id() {
+                if node_id == id {
+                    // If a match is found, return a clone of the node
+                    return Some(node.clone());
+                }
             }
 
             // If no match, extend the stack with the children of the current node
