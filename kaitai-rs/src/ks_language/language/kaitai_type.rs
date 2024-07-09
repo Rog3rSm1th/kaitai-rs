@@ -36,23 +36,20 @@ pub fn parse_unsigned_integer(data: &[u8], size: usize) -> Vec<u8> {
 }
 
 /// Parses a null-terminated string (or with a custom terminator)
-/// Returns the parsed string as a Vec<u8> up to and including the terminator or the specified size, whichever comes first
+/// Returns the parsed string as a Vec<u8> up to and including the terminator if size is not specified,
+/// or up to the specified size if provided, ignoring the terminator
 pub fn parse_strz(data: &[u8], size: Option<usize>, terminator: u8) -> Vec<u8> {
-    let mut end_pos = data.len(); // Default to the entire length of the data
-
-    // Check for the specified size and adjust end_pos if it is smaller
-    if let Some(specified_size) = size {
-        if specified_size < end_pos {
-            end_pos = specified_size;
+    let end_pos = if let Some(specified_size) = size {
+        // Use the specified size, ignoring the terminator
+        std::cmp::min(specified_size, data.len())
+    } else {
+        // No size specified, find the terminator position
+        if let Some(terminator_pos) = data.iter().position(|&x| x == terminator) {
+            terminator_pos + 1 // Include the terminator
+        } else {
+            data.len() // Default to the entire length of the data
         }
-    }
-
-    // Check for the terminator and adjust end_pos if it is found earlier
-    if let Some(terminator_pos) = data.iter().position(|&x| x == terminator) {
-        if terminator_pos < end_pos {
-            end_pos = terminator_pos + 1; // Include the terminator
-        }
-    }
+    };
 
     // Return the string up to end_pos
     data[..end_pos].to_vec()

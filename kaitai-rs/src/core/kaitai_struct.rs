@@ -92,7 +92,7 @@ impl KaitaiStruct {
                             // Evaluate repeat expression if applicable
                             if let Some(repeat) = &attribute.repeat {
                                 if let Repeat::Expr = repeat {
-                                    let repeat_count = evaluate(&self.ast, &attribute.repeat_expr.as_ref().unwrap());
+                                    let _repeat_count = evaluate(&self.ast, &attribute.repeat_expr.as_ref().unwrap());
                                     // TODO: Use repeat_count to handle repeating elements
                                 }
                             }
@@ -116,7 +116,7 @@ impl KaitaiStruct {
                     // Set data of the attribute node with the contents field data
                     attribute_node_borrowed.set_data(content.clone());
                 }
-                
+
                 // Handle attributes with size but no type
                 else if let Some(size) = &attribute.size {
                     if let Ok(size) = size.parse::<usize>() {
