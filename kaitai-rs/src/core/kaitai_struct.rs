@@ -46,10 +46,10 @@ impl KaitaiStruct {
     /// TODO: Step-by-step improvements to manage more and more features
     fn parse_data(&mut self) {
         let root_node = self.ast.get_root().clone();
-
+    
         // Keep track of the current offset in the data
         let mut data_offset = 0;
-
+    
         // Iterate through top-level attributes defined in the format description
         for attribute in &self.format_description.format.seq.attributes {
             // Init the attribute node
@@ -59,11 +59,11 @@ impl KaitaiStruct {
                 .clone()
                 .unwrap_or_else(|| "default_id".to_string());
             let attribute_node = Node::<Vec<u8>>::new(attribute_id.clone());
-
+    
             // Borrow attribute_node mutably
             {
                 let mut attribute_node_borrowed = attribute_node.borrow_mut();
-
+    
                 // Handle attributes with size-eos enabled
                 if attribute.size_eos {
                     attribute_node_borrowed.set_data(self.data.clone());
@@ -85,22 +85,23 @@ impl KaitaiStruct {
                                 .size
                                 .as_ref()
                                 .and_then(|s| s.parse::<usize>().ok());
-
+    
                             // Determine the terminator, defaulting to null byte if not specified
                             let terminator = attribute.terminator.unwrap_or(0);
-
+    
                             // Evaluate repeat expression if applicable
                             if let Some(repeat) = &attribute.repeat {
                                 if let Repeat::Expr = repeat {
-                                    evaluate(&self.ast, &attribute.repeat_expr.as_ref().unwrap());
+                                    let repeat_count = evaluate(&self.ast, &attribute.repeat_expr.as_ref().unwrap());
+                                    // TODO: Use repeat_count to handle repeating elements
                                 }
                             }
-
+    
                             // Parse data as a null-terminated string (StringZ)
                             let string_data =
                                 parse_strz(&self.data[data_offset..], size, terminator);
                             attribute_node_borrowed.set_data(string_data.clone());
-
+    
                             // Advance data offset by the length of the parsed string
                             data_offset += string_data.len();
                         }
@@ -115,8 +116,20 @@ impl KaitaiStruct {
                     // Set data of the attribute node with the contents field data
                     attribute_node_borrowed.set_data(content.clone());
                 }
+                
+                // Handle attributes with size but no type
+                else if let Some(size) = &attribute.size {
+                    if let Ok(size) = size.parse::<usize>() {
+                        // Extract raw data of the specified size
+                        let raw_data = self.data[data_offset..data_offset + size].to_vec();
+                        attribute_node_borrowed.set_data(raw_data);
+    
+                        // Advance data offset by the size
+                        data_offset += size;
+                    }
+                }
             } // Borrow of attribute_node ends here
-
+    
             // Add the attribute node to the root node outside of the borrow scope
             root_node.borrow_mut().add_child(attribute_node);
         }
