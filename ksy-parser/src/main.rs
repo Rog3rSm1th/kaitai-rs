@@ -28,5 +28,5 @@ fn main() {
     parser.parse_file(Path::new(file_path)).unwrap();
 
     // Print the AST
-    println!("{:#?}", parser.ast);
+    parser.ast.print_ast();
 }

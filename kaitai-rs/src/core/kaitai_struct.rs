@@ -1,4 +1,5 @@
 use crate::core::ast::Node;
+use crate::core::ast::NodeType;
 use crate::core::ast::AST;
 use crate::core::expression::evaluate;
 use crate::ks_language::format_description::FormatDescription;
@@ -67,6 +68,7 @@ impl KaitaiStruct {
                 // Handle attributes with size-eos enabled
                 if attribute.size_eos {
                     attribute_node_borrowed.set_data(self.data.clone());
+                    attribute_node_borrowed.set_node_type(NodeType::Array); // Set node type to Array
                 }
                 // If seq_type attribute exists
                 else if let Some(seq_type) = &attribute.seq_type {
@@ -76,6 +78,7 @@ impl KaitaiStruct {
                             let value =
                                 parse_unsigned_integer(&self.data[data_offset..], *size as usize);
                             attribute_node_borrowed.set_data(value);
+                            attribute_node_borrowed.set_node_type(NodeType::Integer); // Set node type to Integer
                             data_offset += *size as usize; // Advance data offset
                         }
                         PureType::StringZ => {
@@ -113,6 +116,7 @@ impl KaitaiStruct {
                                 // Create a new node without ID for each parsed stringz
                                 let stringz_node = Node::<Vec<u8>>::new(None);
                                 stringz_node.borrow_mut().set_data(string_data.clone());
+                                stringz_node.borrow_mut().set_node_type(NodeType::String); // Set node type to String
                                 attribute_node_borrowed.add_child(stringz_node);
                             }
                         }
@@ -126,6 +130,7 @@ impl KaitaiStruct {
                 else if let Some(content) = &attribute.contents {
                     // Set data of the attribute node with the contents field data
                     attribute_node_borrowed.set_data(content.clone());
+                    attribute_node_borrowed.set_node_type(NodeType::Array); // Assuming contents imply an array type
                 }
                 // Handle attributes with size but no type
                 else if let Some(size) = &attribute.size {
@@ -133,6 +138,7 @@ impl KaitaiStruct {
                         // Extract raw data of the specified size
                         let raw_data = self.data[data_offset..data_offset + size].to_vec();
                         attribute_node_borrowed.set_data(raw_data);
+                        attribute_node_borrowed.set_node_type(NodeType::Array); // Assuming raw data of specified size imply an array type
 
                         // Advance data offset by the size
                         data_offset += size;

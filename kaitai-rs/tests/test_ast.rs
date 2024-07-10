@@ -1,5 +1,6 @@
 use kaitai_rs::core::ast::Node;
 use kaitai_rs::core::ast::NodeRef;
+use kaitai_rs::core::ast::NodeType;
 use kaitai_rs::core::ast::AST;
 
 // This file contains unit tests for the Node and AST structs implemented in the kaitai_rs library.
@@ -135,4 +136,22 @@ fn test_ast_get_node_by_id() {
         Some(grandchild2.clone().borrow().clone())
     );
     assert_eq!(ast.get_node_by_id("nonexistent"), None);
+}
+
+#[test]
+// Test setting and getting the node type
+fn test_node_type() {
+    let node: NodeRef<i32> = Node::new(Some("test_node".to_string()));
+
+    // Set node type to Integer
+    node.borrow_mut().set_node_type(NodeType::Integer);
+    assert_eq!(node.borrow().get_node_type(), Some(&NodeType::Integer));
+
+    // Set node type to String
+    node.borrow_mut().set_node_type(NodeType::String);
+    assert_eq!(node.borrow().get_node_type(), Some(&NodeType::String));
+
+    // Set node type to Array
+    node.borrow_mut().set_node_type(NodeType::Array);
+    assert_eq!(node.borrow().get_node_type(), Some(&NodeType::Array));
 }

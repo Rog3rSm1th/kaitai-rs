@@ -3,6 +3,14 @@ use std::rc::Rc;
 
 pub type NodeRef<T> = Rc<RefCell<Node<T>>>;
 
+/// Enum representing the type of a node
+#[derive(Debug, Clone, PartialEq)]
+pub enum NodeType {
+    String,
+    Integer,
+    Array,
+}
+
 /// A struct representing a node in an Abstract Syntax Tree (AST)
 #[derive(Debug)]
 pub struct Node<T> {
@@ -17,16 +25,20 @@ pub struct Node<T> {
 
     /// The data associated with this node in the AST, if any
     data: Option<T>,
+
+    /// The type of this node in the AST
+    node_type: Option<NodeType>,
 }
 
 impl<T: Clone> Node<T> {
-    /// Creates a new `Node` with specified initial ID, no parent, no children, no data
+    /// Creates a new `Node` with specified initial ID, no type, no parent, no children, no data
     pub fn new(id: Option<String>) -> NodeRef<T> {
         Rc::new(RefCell::new(Node {
             id,
             parent: None,
             children: Vec::new(),
             data: None,
+            node_type: None,
         }))
     }
 
@@ -71,6 +83,16 @@ impl<T: Clone> Node<T> {
         &self.id
     }
 
+    /// Sets the type of this node in the AST
+    pub fn set_node_type(&mut self, node_type: NodeType) {
+        self.node_type = Some(node_type);
+    }
+
+    /// Gets the type of this node in the AST
+    pub fn get_node_type(&self) -> Option<&NodeType> {
+        self.node_type.as_ref()
+    }
+
     /// Recursively gets data from the children of this node in the AST
     pub fn get_data_from_children(&self) -> Vec<T> {
         let mut data = Vec::new();
@@ -92,6 +114,7 @@ impl<T: Clone> Clone for Node<T> {
             parent: self.parent.clone(),
             children: self.children.iter().cloned().collect(),
             data: self.data.clone(),
+            node_type: self.node_type.clone(),
         }
     }
 }
@@ -99,8 +122,11 @@ impl<T: Clone> Clone for Node<T> {
 impl<T: PartialEq> PartialEq for Node<T> {
     /// Compares two `Node` instances for equality.
     fn eq(&self, other: &Self) -> bool {
-        // Compare `parent`, `children`, and `data` fields for equality.
-        self.parent == other.parent && self.children == other.children && self.data == other.data
+        // Compare `parent`, `children`, `data`, and `node_type` fields for equality.
+        self.parent == other.parent
+            && self.children == other.children
+            && self.data == other.data
+            && self.node_type == other.node_type
     }
 }
 
@@ -111,7 +137,7 @@ pub struct AST<T> {
     root: NodeRef<T>,
 }
 
-impl<T: Clone> AST<T> {
+impl<T: Clone + std::fmt::Debug> AST<T> {
     /// Creates a new `AST` with an empty root node identified by the ID "root"
     pub fn new() -> AST<T> {
         let root = Node::new(Some("root".to_string()));
@@ -168,6 +194,34 @@ impl<T: Clone> AST<T> {
         while let Some(node) = stack.pop() {
             f(&node);
             stack.extend(node.borrow().get_children().iter().cloned().rev());
+        }
+    }
+
+    /// Prints the AST in a readable format
+    pub fn print_ast(&self) {
+        self.print_node(self.get_root(), 0, 0);
+    }
+
+    /// Helper function to print a node and its children recursively
+    fn print_node(&self, node: &NodeRef<T>, level: usize, index: usize) {
+        let node_borrowed = node.borrow();
+        let id_or_index = node_borrowed
+            .get_id()
+            .clone()
+            .unwrap_or_else(|| format!("{}", index));
+        if node_borrowed.get_children().is_empty() {
+            // Print the node name or index with the appropriate indentation and its data
+            let data = match &node_borrowed.data {
+                Some(d) => format!("{:?}", d),
+                None => "None".to_string(),
+            };
+            println!("{}{}: {}", " ".repeat(level * 4), id_or_index, data);
+        } else {
+            println!("{}{}", " ".repeat(level * 4), id_or_index);
+            // Continue traversing the children
+            for (i, child) in node_borrowed.get_children().iter().enumerate() {
+                self.print_node(child, level + 1, i);
+            }
         }
     }
 }
