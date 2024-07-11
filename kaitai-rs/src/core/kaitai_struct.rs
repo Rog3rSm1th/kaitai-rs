@@ -3,6 +3,7 @@ use crate::core::ast::NodeType;
 use crate::core::ast::AST;
 use crate::core::expression::evaluate;
 use crate::ks_language::format_description::FormatDescription;
+use crate::ks_language::language::attribute::Attribute;
 use crate::ks_language::language::attribute::Repeat;
 use crate::ks_language::language::kaitai_type::PureType;
 use crate::ks_language::language::kaitai_type::{parse_strz, parse_unsigned_integer};
@@ -42,6 +43,121 @@ impl KaitaiStruct {
         println!("{}", data_str);
     }
 
+    // Parses an unsigned integer attribute
+    fn parse_unsigned_integer_attribute(
+        &self,
+        attribute: &Attribute,
+        attribute_node: &mut Node<Vec<u8>>,
+        data_offset: &mut usize,
+    ) {
+        let size = match &attribute.seq_type {
+            Some(seq_type) => match &seq_type.pure_type {
+                PureType::UnsignedInteger(size) => *size,
+                _ => return,
+            },
+            None => return,
+        };
+
+        let value = parse_unsigned_integer(&self.data[*data_offset..], size as usize);
+        attribute_node.set_data(value);
+        attribute_node.set_node_type(NodeType::Integer);
+        *data_offset += size as usize;
+    }
+
+    // Parses a null-terminated string attribute
+    fn parse_stringz_attribute(
+        &self,
+        attribute: &Attribute,
+        attribute_node: &mut Node<Vec<u8>>,
+        data_offset: &mut usize,
+    ) {
+        let size = attribute
+            .size
+            .as_ref()
+            .and_then(|s| s.parse::<usize>().ok());
+        let terminator = attribute.terminator.unwrap_or(0);
+        let repeat_count = if let Some(repeat) = &attribute.repeat {
+            if let Repeat::Expr = repeat {
+                let count = evaluate(&self.ast, &attribute.repeat_expr.as_ref().unwrap());
+                count as usize
+            } else {
+                1
+            }
+        } else {
+            1
+        };
+
+        for _ in 0..repeat_count {
+            let string_data = parse_strz(&self.data[*data_offset..], size, terminator);
+            *data_offset += string_data.len();
+
+            if repeat_count > 1 {
+                let stringz_node = Node::<Vec<u8>>::new(None);
+                stringz_node.borrow_mut().set_data(string_data.clone());
+                stringz_node.borrow_mut().set_node_type(NodeType::String);
+                attribute_node.add_child(stringz_node);
+            } else {
+                attribute_node.set_data(string_data);
+                attribute_node.set_node_type(NodeType::String);
+            }
+        }
+    }
+
+    // Parses a contents attribute
+    fn parse_contents_attribute(&self, attribute: &Attribute, attribute_node: &mut Node<Vec<u8>>) {
+        if let Some(content) = &attribute.contents {
+            attribute_node.set_data(content.clone());
+            attribute_node.set_node_type(NodeType::Array);
+        }
+    }
+
+    // Parses a size attribute
+    fn parse_size_attribute(
+        &self,
+        attribute: &Attribute,
+        attribute_node: &mut Node<Vec<u8>>,
+        data_offset: &mut usize,
+    ) {
+        if let Some(size) = &attribute.size {
+            if let Ok(size) = size.parse::<usize>() {
+                let raw_data = self.data[*data_offset..*data_offset + size].to_vec();
+                attribute_node.set_data(raw_data);
+                attribute_node.set_node_type(NodeType::Array);
+                *data_offset += size;
+            }
+        }
+    }
+
+    // Parses a single attribute
+    fn parse_attribute(
+        &self,
+        attribute: &Attribute,
+        attribute_node: &mut Node<Vec<u8>>,
+        data_offset: &mut usize,
+    ) {
+        if attribute.size_eos {
+            attribute_node.set_data(self.data.clone());
+            attribute_node.set_node_type(NodeType::Array);
+        } else if let Some(seq_type) = &attribute.seq_type {
+            match &seq_type.pure_type {
+                PureType::UnsignedInteger(_) => {
+                    self.parse_unsigned_integer_attribute(attribute, attribute_node, data_offset);
+                }
+                PureType::StringZ => {
+                    self.parse_stringz_attribute(attribute, attribute_node, data_offset);
+                }
+                _ => {
+                    // TODO: Implement parsing logic for other types
+                    todo!();
+                }
+            }
+        } else if attribute.contents.is_some() {
+            self.parse_contents_attribute(attribute, attribute_node);
+        } else if attribute.size.is_some() {
+            self.parse_size_attribute(attribute, attribute_node, data_offset);
+        }
+    }
+
     /// Parses the data and converts it into an AST
     /// For now, it's just a naive implementation that only parses top-level attributes
     /// TODO: Step-by-step improvements to manage more and more features
@@ -61,89 +177,9 @@ impl KaitaiStruct {
                 .unwrap_or_else(|| "default_id".to_string());
             let attribute_node = Node::<Vec<u8>>::new(Some(attribute_id.clone()));
 
-            // Borrow attribute_node mutably
             {
                 let mut attribute_node_borrowed = attribute_node.borrow_mut();
-
-                // Handle attributes with size-eos enabled
-                if attribute.size_eos {
-                    attribute_node_borrowed.set_data(self.data.clone());
-                    attribute_node_borrowed.set_node_type(NodeType::Array); // Set node type to Array
-                }
-                // If seq_type attribute exists
-                else if let Some(seq_type) = &attribute.seq_type {
-                    match &seq_type.pure_type {
-                        PureType::UnsignedInteger(size) => {
-                            // Parse data as an unsigned integer of the given size
-                            let value =
-                                parse_unsigned_integer(&self.data[data_offset..], *size as usize);
-                            attribute_node_borrowed.set_data(value);
-                            attribute_node_borrowed.set_node_type(NodeType::Integer); // Set node type to Integer
-                            data_offset += *size as usize; // Advance data offset
-                        }
-                        PureType::StringZ => {
-                            // Convert attribute size from Option<String> to Option<usize>
-                            // TODO: resolve expressions as integer size
-                            let size = attribute
-                                .size
-                                .as_ref()
-                                .and_then(|s| s.parse::<usize>().ok());
-
-                            // Determine the terminator, defaulting to null byte if not specified
-                            let terminator = attribute.terminator.unwrap_or(0);
-
-                            // Evaluate repeat expression if applicable
-                            let repeat_count = if let Some(repeat) = &attribute.repeat {
-                                if let Repeat::Expr = repeat {
-                                    let count = evaluate(
-                                        &self.ast,
-                                        &attribute.repeat_expr.as_ref().unwrap(),
-                                    );
-                                    count as usize
-                                } else {
-                                    1
-                                }
-                            } else {
-                                1
-                            };
-
-                            // Parse data as a null-terminated string (StringZ)
-                            for _ in 0..repeat_count {
-                                let string_data =
-                                    parse_strz(&self.data[data_offset..], size, terminator);
-                                data_offset += string_data.len();
-
-                                // Create a new node without ID for each parsed stringz
-                                let stringz_node = Node::<Vec<u8>>::new(None);
-                                stringz_node.borrow_mut().set_data(string_data.clone());
-                                stringz_node.borrow_mut().set_node_type(NodeType::String); // Set node type to String
-                                attribute_node_borrowed.add_child(stringz_node);
-                            }
-                        }
-                        _ => {
-                            // TODO: Implement parsing logic for other types
-                            todo!();
-                        }
-                    }
-                }
-                // If contents attribute exists
-                else if let Some(content) = &attribute.contents {
-                    // Set data of the attribute node with the contents field data
-                    attribute_node_borrowed.set_data(content.clone());
-                    attribute_node_borrowed.set_node_type(NodeType::Array); // Assuming contents imply an array type
-                }
-                // Handle attributes with size but no type
-                else if let Some(size) = &attribute.size {
-                    if let Ok(size) = size.parse::<usize>() {
-                        // Extract raw data of the specified size
-                        let raw_data = self.data[data_offset..data_offset + size].to_vec();
-                        attribute_node_borrowed.set_data(raw_data);
-                        attribute_node_borrowed.set_node_type(NodeType::Array); // Assuming raw data of specified size imply an array type
-
-                        // Advance data offset by the size
-                        data_offset += size;
-                    }
-                }
+                self.parse_attribute(attribute, &mut attribute_node_borrowed, &mut data_offset);
             } // Borrow of attribute_node ends here
 
             // Add the attribute node to the root node outside of the borrow scope
