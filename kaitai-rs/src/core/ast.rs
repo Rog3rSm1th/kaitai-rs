@@ -212,9 +212,24 @@ impl AST {
         if node_borrowed.get_children().is_empty() {
             // Print the node name or index with the appropriate indentation and its data
             let data = match (&node_borrowed.data, node_borrowed.get_node_type()) {
-                (Some(d), Some(NodeType::String)) => format!("{:?}", String::from_utf8_lossy(d)),
+                // String
+                (Some(d), Some(NodeType::String)) => {
+                    format!("{:?}", String::from_utf8_lossy(d).trim())
+                }
+                // integer
                 (Some(d), Some(NodeType::Integer)) => {
-                    format!("0x{:x}", u32::from_le_bytes(d[..4].try_into().unwrap()))
+                    let integer = match d.len() {
+                        1 => u8::from_le_bytes(d[..1].try_into().unwrap()) as u64,
+                        2 => u16::from_le_bytes(d[..2].try_into().unwrap()) as u64,
+                        4 => u32::from_le_bytes(d[..4].try_into().unwrap()) as u64,
+                        8 => u64::from_le_bytes(d[..8].try_into().unwrap()) as u64,
+                        _ => {
+                            eprintln!("Invalid integer data: {:?}", d);
+                            return;
+                        }
+                    };
+                    // Array
+                    format!("0x{:x}", integer)
                 }
                 (Some(d), _) => format!("{:?}", d),
                 (None, _) => "None".to_string(),
