@@ -16,9 +16,10 @@ use std::path::Path;
 #[allow(dead_code)]
 pub struct KaitaiStruct {
     data: Vec<u8>,
-    pub ast: AST<Vec<u8>>,
+    pub ast: AST,
     format_description: FormatDescription,
 }
+
 impl KaitaiStruct {
     // Create a new instance of `KaitaiStruct` with an empty Vec<u8> for data, a new AST for ast, and the provided FormatDescription
     pub fn new(format_description: FormatDescription) -> Self {
@@ -37,17 +38,11 @@ impl KaitaiStruct {
         &self.data
     }
 
-    // Prints the data as a string, even if it contains invalid UTF-8 sequences
-    pub fn print_data_as_string_lossy(&self) {
-        let data_str: String = self.data.iter().map(|byte| char::from(*byte)).collect();
-        println!("{}", data_str);
-    }
-
     // Parses an unsigned integer attribute
     fn parse_unsigned_integer_attribute(
         &self,
         attribute: &Attribute,
-        attribute_node: &mut Node<Vec<u8>>,
+        attribute_node: &mut Node,
         data_offset: &mut usize,
     ) {
         let size = match &attribute.seq_type {
@@ -68,7 +63,7 @@ impl KaitaiStruct {
     fn parse_stringz_attribute(
         &self,
         attribute: &Attribute,
-        attribute_node: &mut Node<Vec<u8>>,
+        attribute_node: &mut Node,
         data_offset: &mut usize,
     ) {
         let size = attribute
@@ -92,7 +87,7 @@ impl KaitaiStruct {
             *data_offset += string_data.len();
 
             if repeat_count > 1 {
-                let stringz_node = Node::<Vec<u8>>::new(None);
+                let stringz_node = Node::new(None);
                 stringz_node.borrow_mut().set_data(string_data.clone());
                 stringz_node.borrow_mut().set_node_type(NodeType::String);
                 attribute_node.add_child(stringz_node);
@@ -104,7 +99,7 @@ impl KaitaiStruct {
     }
 
     // Parses a contents attribute
-    fn parse_contents_attribute(&self, attribute: &Attribute, attribute_node: &mut Node<Vec<u8>>) {
+    fn parse_contents_attribute(&self, attribute: &Attribute, attribute_node: &mut Node) {
         if let Some(content) = &attribute.contents {
             attribute_node.set_data(content.clone());
             attribute_node.set_node_type(NodeType::Array);
@@ -115,7 +110,7 @@ impl KaitaiStruct {
     fn parse_size_attribute(
         &self,
         attribute: &Attribute,
-        attribute_node: &mut Node<Vec<u8>>,
+        attribute_node: &mut Node,
         data_offset: &mut usize,
     ) {
         if let Some(size) = &attribute.size {
@@ -132,7 +127,7 @@ impl KaitaiStruct {
     fn parse_attribute(
         &self,
         attribute: &Attribute,
-        attribute_node: &mut Node<Vec<u8>>,
+        attribute_node: &mut Node,
         data_offset: &mut usize,
     ) {
         if attribute.size_eos {
@@ -175,7 +170,7 @@ impl KaitaiStruct {
                 .id
                 .clone()
                 .unwrap_or_else(|| "default_id".to_string());
-            let attribute_node = Node::<Vec<u8>>::new(Some(attribute_id.clone()));
+            let attribute_node = Node::new(Some(attribute_id.clone()));
 
             {
                 let mut attribute_node_borrowed = attribute_node.borrow_mut();

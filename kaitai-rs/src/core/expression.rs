@@ -9,7 +9,7 @@ use std::borrow::Borrow;
 struct ExprParser;
 
 /// Converts the first 4 bytes of a Vec<u8> to an i32
-fn vec_u8_to_i32(vec: Vec<u8>) -> Result<i32, String> {
+fn vec_u8_to_i32(vec: &Vec<u8>) -> Result<i32, String> {
     if vec.len() < 4 {
         return Err(String::from("The vector must contain at least 4 elements"));
     }
@@ -23,7 +23,7 @@ fn vec_u8_to_i32(vec: Vec<u8>) -> Result<i32, String> {
 
 /// Evaluates an kaitai language expression against an Abstract Syntax Tree (AST) of Vec<u8> nodes and returns an i32 result
 /// TODO : handle more complex expressions, for now we only evaluate expressions composed solely of an integer or an identifier
-pub fn evaluate(ast: &AST<Vec<u8>>, expr: &str) -> i32 {
+pub fn evaluate(ast: &AST, expr: &str) -> i32 {
     match ExprParser::parse(Rule::literal, expr) {
         Ok(pairs) => {
             for pair in pairs {
@@ -40,7 +40,7 @@ pub fn evaluate(ast: &AST<Vec<u8>>, expr: &str) -> i32 {
                                 // Retrieve data from the node
                                 if let Some(data) = node.get_data() {
                                     // Convert data to i32 directly
-                                    if let Ok(value) = vec_u8_to_i32(data.clone()) {
+                                    if let Ok(value) = vec_u8_to_i32(data) {
                                         return value;
                                     }
                                 }

@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-pub type NodeRef<T> = Rc<RefCell<Node<T>>>;
+pub type NodeRef = Rc<RefCell<Node>>;
 
 /// Enum representing the type of a node
 #[derive(Debug, Clone, PartialEq)]
@@ -13,26 +13,26 @@ pub enum NodeType {
 
 /// A struct representing a node in an Abstract Syntax Tree (AST)
 #[derive(Debug)]
-pub struct Node<T> {
+pub struct Node {
     /// The ID of this node in the AST
     id: Option<String>,
 
     /// The parent of this node in the AST, if any
-    parent: Option<NodeRef<T>>,
+    parent: Option<NodeRef>,
 
     /// The children of this node in the AST, if any
-    children: Vec<NodeRef<T>>,
+    children: Vec<NodeRef>,
 
     /// The data associated with this node in the AST, if any
-    data: Option<T>,
+    data: Option<Vec<u8>>,
 
     /// The type of this node in the AST
     node_type: Option<NodeType>,
 }
 
-impl<T: Clone> Node<T> {
+impl Node {
     /// Creates a new `Node` with specified initial ID, no type, no parent, no children, no data
-    pub fn new(id: Option<String>) -> NodeRef<T> {
+    pub fn new(id: Option<String>) -> NodeRef {
         Rc::new(RefCell::new(Node {
             id,
             parent: None,
@@ -48,33 +48,33 @@ impl<T: Clone> Node<T> {
     }
 
     /// Sets the data associated with this node in the AST
-    pub fn set_data(&mut self, data: T) {
+    pub fn set_data(&mut self, data: Vec<u8>) {
         self.data = Some(data);
     }
 
     /// Gets the data associated with this node in the AST, if any
-    pub fn get_data(&self) -> Option<&T> {
+    pub fn get_data(&self) -> Option<&Vec<u8>> {
         self.data.as_ref()
     }
 
     /// Sets the parent of this node in the AST
-    pub fn set_parent(&mut self, parent: NodeRef<T>) {
+    pub fn set_parent(&mut self, parent: NodeRef) {
         self.parent = Some(parent);
     }
 
     /// Gets the parent of this node in the AST, if any
-    pub fn get_parent(&self) -> Option<&NodeRef<T>> {
+    pub fn get_parent(&self) -> Option<&NodeRef> {
         self.parent.as_ref()
     }
 
     /// Adds a child to this node in the AST
-    pub fn add_child(&mut self, child: NodeRef<T>) {
+    pub fn add_child(&mut self, child: NodeRef) {
         // Add the child to the children list
         self.children.push(child);
     }
 
     /// Gets the children of this node in the AST, if any
-    pub fn get_children(&self) -> &Vec<NodeRef<T>> {
+    pub fn get_children(&self) -> &Vec<NodeRef> {
         &self.children
     }
 
@@ -94,7 +94,7 @@ impl<T: Clone> Node<T> {
     }
 
     /// Recursively gets data from the children of this node in the AST
-    pub fn get_data_from_children(&self) -> Vec<T> {
+    pub fn get_data_from_children(&self) -> Vec<Vec<u8>> {
         let mut data = Vec::new();
         for child in &self.children {
             if let Some(child_data) = child.borrow().get_data().cloned() {
@@ -107,7 +107,7 @@ impl<T: Clone> Node<T> {
 }
 
 /// Implement the Clone trait for Node struct
-impl<T: Clone> Clone for Node<T> {
+impl Clone for Node {
     fn clone(&self) -> Self {
         Node {
             id: self.id.clone(),
@@ -119,7 +119,7 @@ impl<T: Clone> Clone for Node<T> {
     }
 }
 
-impl<T: PartialEq> PartialEq for Node<T> {
+impl PartialEq for Node {
     /// Compares two `Node` instances for equality.
     fn eq(&self, other: &Self) -> bool {
         // Compare `parent`, `children`, `data`, and `node_type` fields for equality.
@@ -132,25 +132,25 @@ impl<T: PartialEq> PartialEq for Node<T> {
 
 /// A struct representing an Abstract Syntax Tree (AST)
 #[derive(Debug, Clone)]
-pub struct AST<T> {
+pub struct AST {
     /// The root node of the AST
-    root: NodeRef<T>,
+    root: NodeRef,
 }
 
-impl<T: Clone + std::fmt::Debug> AST<T> {
+impl AST {
     /// Creates a new `AST` with an empty root node identified by the ID "root"
-    pub fn new() -> AST<T> {
+    pub fn new() -> AST {
         let root = Node::new(Some("root".to_string()));
         AST { root }
     }
 
     /// Sets the root node of the AST
-    pub fn set_root(&mut self, root: NodeRef<T>) {
+    pub fn set_root(&mut self, root: NodeRef) {
         self.root = root;
     }
 
     /// Gets the root node of the AST
-    pub fn get_root(&self) -> &NodeRef<T> {
+    pub fn get_root(&self) -> &NodeRef {
         &self.root
     }
 
@@ -159,7 +159,7 @@ impl<T: Clone + std::fmt::Debug> AST<T> {
     /// This function performs a depth-first search (DFS) starting from the root node,
     /// looking for a node with a matching ID. If such a node is found, it returns
     /// a cloned instance of that node. Otherwise, it returns `None`
-    pub fn get_node_by_id(&self, id: &str) -> Option<Node<T>> {
+    pub fn get_node_by_id(&self, id: &str) -> Option<Node> {
         // Initialize a stack for DFS with the root node
         let mut stack = vec![self.root.clone()];
 
@@ -188,7 +188,7 @@ impl<T: Clone + std::fmt::Debug> AST<T> {
     /// Performs a depth-first traversal of the AST, calling the given closure on each node
     pub fn traverse<F>(&self, mut f: F)
     where
-        F: FnMut(&NodeRef<T>),
+        F: FnMut(&NodeRef),
     {
         let mut stack = vec![self.root.clone()];
         while let Some(node) = stack.pop() {
@@ -203,7 +203,7 @@ impl<T: Clone + std::fmt::Debug> AST<T> {
     }
 
     /// Helper function to print a node and its children recursively
-    fn print_node(&self, node: &NodeRef<T>, level: usize, index: usize) {
+    fn print_node(&self, node: &NodeRef, level: usize, index: usize) {
         let node_borrowed = node.borrow();
         let id_or_index = node_borrowed
             .get_id()
@@ -211,9 +211,13 @@ impl<T: Clone + std::fmt::Debug> AST<T> {
             .unwrap_or_else(|| format!("{}", index));
         if node_borrowed.get_children().is_empty() {
             // Print the node name or index with the appropriate indentation and its data
-            let data = match &node_borrowed.data {
-                Some(d) => format!("{:?}", d),
-                None => "None".to_string(),
+            let data = match (&node_borrowed.data, node_borrowed.get_node_type()) {
+                (Some(d), Some(NodeType::String)) => format!("{:?}", String::from_utf8_lossy(d)),
+                (Some(d), Some(NodeType::Integer)) => {
+                    format!("0x{:x}", u32::from_le_bytes(d[..4].try_into().unwrap()))
+                }
+                (Some(d), _) => format!("{:?}", d),
+                (None, _) => "None".to_string(),
             };
             println!("{}{}: {}", " ".repeat(level * 4), id_or_index, data);
         } else {
