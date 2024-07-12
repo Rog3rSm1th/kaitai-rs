@@ -8,13 +8,14 @@
 /// - Streams
 
 // Identifier
-identifier = { 'a'..'z' ~ ('a'..'z' | '0'..'9')+ } 
+identifier = { 'a'..'z' ~ ('a'..'z' | '0'..'9')+ }
 
 // Operators
 arithmetic_operator = { "+" | "-" | "/" | "*" | "%" }
 relational_operator = { "<" | "<=" | ">" | ">=" | "==" | "!=" }
 bitwise_operator    = { "<<" | ">>" | "&" | "|" | "^" }
 logical_operator    = { "not" | "and" | "or" }
+operator            = { (arithmetic_operator | relational_operator | bitwise_operator | logical_operator) }
 
 // integers
 visual_separator = _{ "_" }
@@ -43,5 +44,14 @@ literal = { identifier | floating_point_number | integer | boolean | array }
 
 // User-defined types
 user_defined_type = { "_root" | "_parent" | "io" }
+
+// Expression
+expression = { literal ~ (operator ~ literal)* }
+
+// Single expression
+single_expression = _{ "(" ~ expression ~ ")" | expression }
+
+// Full expression
+full_expression = _{ SOI ~ single_expression ~ (operator ~ single_expression)* ~ EOI }
 
 WHITESPACE = _{ " " | "\t" }
