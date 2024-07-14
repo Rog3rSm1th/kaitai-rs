@@ -6,16 +6,41 @@
 /// - Ternary (if-then-else) operator
 /// - Methods
 /// - Streams
+/// - Enums
 
 // Identifier
-identifier = { 'a'..'z' ~ ('a'..'z' | '0'..'9')+ }
+identifier = { 'a'..'z' ~ ('a'..'z' | '0'..'9' | "_")* }
+
+// User-defined types
+user_defined_type = { "_root" | "_parent" | "io" }
+
+// Path element
+path_element = { identifier | user_defined_type }
+
+// Index
+index = { expression }
+
+// Path
+path = { path_element ~ ("." ~ path_element | "[" ~ index ~ "]")* }
 
 // Operators
 arithmetic_operator = { "+" | "-" | "/" | "*" | "%" }
-relational_operator = { "<" | "<=" | ">" | ">=" | "==" | "!=" }
 bitwise_operator    = { "<<" | ">>" | "&" | "|" | "^" }
+relational_operator = { "<" | "<=" | ">" | ">=" | "==" | "!=" }
 logical_operator    = { "not" | "and" | "or" }
-operator            = { (arithmetic_operator | relational_operator | bitwise_operator | logical_operator) }
+operator            = { (arithmetic_operator | bitwise_operator | relational_operator | logical_operator) }
+
+// String
+string = {
+    ("\"" ~ inner_double_quoted ~ "\"")
+  | ("'" ~ inner_single_quoted ~ "'")
+}
+
+inner_double_quoted = @{ (!("\\" | "\"" | "'") ~ ANY)* ~ (escape ~ inner_double_quoted)? }
+inner_single_quoted = @{ (!("\\" | "\"" | "'") ~ ANY)* ~ (escape ~ inner_single_quoted)? }
+
+escape  = @{ "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode) }
+unicode = @{ "u" ~ ASCII_HEX_DIGIT{4} }
 
 // integers
 visual_separator = _{ "_" }
@@ -34,16 +59,14 @@ floating_point_number   =  { exponent_notation_float | float }
 boolean = { "true" | "false" }
 
 // Array
+string_array  = { "[" ~ (string ~ ",")* ~ string ~ "]" }
 integer_array = { "[" ~ (integer ~ ",")* ~ integer ~ "]" }
 boolean_array = { "[" ~ (boolean ~ ",")* ~ boolean ~ "]" }
 float_array   = { "[" ~ (floating_point_number ~ ",")* ~ floating_point_number ~ "]" }
 array         = { integer_array | boolean_array | float_array }
 
 // Literal
-literal = { identifier | floating_point_number | integer | boolean | array }
-
-// User-defined types
-user_defined_type = { "_root" | "_parent" | "io" }
+literal = { path | string | floating_point_number | integer | boolean | array }
 
 // Expression
 expression = { literal ~ (operator ~ literal)* }
