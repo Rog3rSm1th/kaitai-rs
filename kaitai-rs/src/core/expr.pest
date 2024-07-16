@@ -2,8 +2,6 @@
 /// https://doc.kaitai.io/user_guide.html#_expression_language
 
 /// TODO :
-/// - Strings
-/// - Ternary (if-then-else) operator
 /// - Methods
 /// - Streams
 /// - Enums
@@ -26,7 +24,7 @@ path = { path_element ~ ("." ~ path_element | "[" ~ index ~ "]")* }
 // Operators
 arithmetic_operator = { "+" | "-" | "/" | "*" | "%" }
 bitwise_operator    = { "<<" | ">>" | "&" | "|" | "^" }
-relational_operator = { "<" | "<=" | ">" | ">=" | "==" | "!=" }
+relational_operator = { "<" | "<=" | ">=" | ">" | "==" | "!=" }
 logical_operator    = { "not" | "and" | "or" }
 operator            = { (arithmetic_operator | bitwise_operator | relational_operator | logical_operator) }
 
@@ -42,12 +40,12 @@ inner_single_quoted = @{ (!("\\" | "\"" | "'") ~ ANY)* ~ (escape ~ inner_single_
 escape  = @{ "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode) }
 unicode = @{ "u" ~ ASCII_HEX_DIGIT{4} }
 
-// integers
+// Integers
 visual_separator = _{ "_" }
 hex_integer      = _{ "0" ~ ("x" | "X") ~ (ASCII_HEX_DIGIT ~ visual_separator?)+ }
 bin_integer      = _{ "0" ~ ("b" | "B") ~ (ASCII_BIN_DIGIT ~ visual_separator?)+ }
 octal_integer    = _{ "0" ~ ("o" | "O") ~ (ASCII_OCT_DIGIT ~ visual_separator?)+ }
-integer          =  { hex_integer | bin_integer | octal_integer | ("-"? ~ DECIMAL_NUMBER+) }
+integer          =  { hex_integer | bin_integer | octal_integer | (("-" | "+")? ~ DECIMAL_NUMBER+) }
 
 // Float
 exponent                = _{ ("e" | "E") ~ ("-" | "+")? ~ DECIMAL_NUMBER+ }
@@ -55,7 +53,7 @@ float                   = _{ "-"? ~ DECIMAL_NUMBER* ~ "." ~ DECIMAL_NUMBER+ }
 exponent_notation_float =  { float ~ exponent }
 floating_point_number   =  { exponent_notation_float | float }
 
-// Booleans
+// Boolean
 boolean = { "true" | "false" }
 
 // Array
@@ -75,6 +73,15 @@ expression = { literal ~ (operator ~ literal)* }
 single_expression = _{ "(" ~ expression ~ ")" | expression }
 
 // Full expression
-full_expression = _{ SOI ~ single_expression ~ (operator ~ single_expression)* ~ EOI }
+full_expression = _{ single_expression ~ (operator ~ single_expression)* }
+
+// Ternary operation
+ternary_operator = { full_expression ~ "?" ~ full_expression ~ ":" ~ full_expression }
+
+// Ternary operator expression
+ternary_operator_expression = { "(" ~ ternary_operator ~ ")" | ternary_operator }
+
+// Kaitai expression
+kaitai_expression = { SOI ~ (ternary_operator_expression | single_expression) ~ (operator ~ (ternary_operator_expression | single_expression))* ~ EOI }
 
 WHITESPACE = _{ " " | "\t" }
