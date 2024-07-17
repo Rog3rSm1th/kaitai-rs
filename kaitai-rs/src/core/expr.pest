@@ -4,7 +4,6 @@
 /// TODO :
 /// - Methods
 /// - Streams
-/// - Enums
 
 // Identifier
 identifier = { 'a'..'z' ~ ('a'..'z' | '0'..'9' | "_")* }
@@ -13,7 +12,7 @@ identifier = { 'a'..'z' ~ ('a'..'z' | '0'..'9' | "_")* }
 user_defined_type = { "_root" | "_parent" | "io" }
 
 // Path element
-path_element = { identifier | user_defined_type }
+path_element = { enum | identifier | user_defined_type }
 
 // Index
 index = { expression }
@@ -56,6 +55,9 @@ floating_point_number   =  { exponent_notation_float | float }
 // Boolean
 boolean = { "true" | "false" }
 
+// Enum
+enum = { identifier ~ "::" ~ identifier } 
+
 // Array
 string_array  = { "[" ~ (string ~ ",")* ~ string ~ "]" }
 integer_array = { "[" ~ (integer ~ ",")* ~ integer ~ "]" }
@@ -64,7 +66,7 @@ float_array   = { "[" ~ (floating_point_number ~ ",")* ~ floating_point_number ~
 array         = { integer_array | boolean_array | float_array }
 
 // Literal
-literal = { path | string | floating_point_number | integer | boolean | array }
+literal = { path | enum | string | floating_point_number | integer | boolean | array }
 
 // Expression
 expression = { literal ~ (operator ~ literal)* }
