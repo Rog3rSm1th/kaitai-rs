@@ -1,10 +1,6 @@
 /// Pest grammar for the kaitai expression language
 /// https://doc.kaitai.io/user_guide.html#_expression_language
 
-/// TODO :
-/// - Methods
-/// - Streams
-
 // Identifier
 identifier = { 'a'..'z' ~ ('a'..'z' | '0'..'9' | "_")* }
 
@@ -12,7 +8,7 @@ identifier = { 'a'..'z' ~ ('a'..'z' | '0'..'9' | "_")* }
 user_defined_type = { "_root" | "_parent" | "io" }
 
 // Path element
-path_element = { enum | identifier | user_defined_type }
+path_element = { method_call| enum | identifier | user_defined_type }
 
 // Index
 index = { expression }
@@ -56,7 +52,7 @@ floating_point_number   =  { exponent_notation_float | float }
 boolean = { "true" | "false" }
 
 // Enum
-enum = { identifier ~ "::" ~ identifier } 
+enum = { identifier ~ "::" ~ identifier }
 
 // Array
 string_array  = { "[" ~ (string ~ ",")* ~ string ~ "]" }
@@ -64,6 +60,29 @@ integer_array = { "[" ~ (integer ~ ",")* ~ integer ~ "]" }
 boolean_array = { "[" ~ (boolean ~ ",")* ~ boolean ~ "]" }
 float_array   = { "[" ~ (floating_point_number ~ ",")* ~ floating_point_number ~ "]" }
 array         = { integer_array | boolean_array | float_array }
+
+// Method
+integer_method     = { "to_s" }
+float_method       = { "to_i" }
+bytes_array_method = { "length" | ("to_s" ~ "(" ~ string ~ ")") }
+string_method      = { "length" | "reverse" | "to_i" | ("to_i" ~ "(" ~ DECIMAL_NUMBER ~ ")") | ("substring" ~ "(" ~ DECIMAL_NUMBER ~ "," ~ DECIMAL_NUMBER ~ ")") }
+enum_method        = { "to_i" }
+array_method       = { "first" | "last" | "size" | "min" | "max" }
+method             = { integer_method | float_method | bytes_array_method | string_method | enum_method | array_method }
+
+// Method calls
+method_call = {
+    (integer ~ "." ~ integer_method)
+  | (float ~ "." ~ float_method)
+  | ((integer_array | string_array | boolean_array)) ~ "." ~ bytes_array_method
+  | (string ~ "." ~ string_method)
+  | (enum ~ "." ~ enum_method)
+  | (array ~ "." ~ array_method)
+  | (identifier ~ "." ~ method)
+}
+
+// Method call expression
+method_call_expression = { method_call | (full_expression ~ "." ~ method_call) }
 
 // Literal
 literal = { path | enum | string | floating_point_number | integer | boolean | array }
