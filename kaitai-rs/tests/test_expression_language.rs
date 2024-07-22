@@ -1,14 +1,18 @@
+#[macro_use]
+extern crate pest_derive;
+
 #[cfg(test)]
 mod tests {
     use pest::Parser;
-    use pest_derive::Parser;
 
     #[derive(Parser)]
     #[grammar = "./core/expr.pest"]
-    struct ExpressionParser;
+    struct KaitaiExpressionParser;
 
     // This file contains unit tests for the kaitai expression language pest grammar.
-    // TODO : Add tests for invalid literals
+    // https://doc.kaitai.io/user_guide.html#_expression_language
+    //
+    // TODO : Add tests for invalid literals & expression
 
     #[test]
     // Test parsing valid identifiers
@@ -20,7 +24,7 @@ mod tests {
         ];
 
         for identifier in valid_identifiers {
-            let result = ExpressionParser::parse(Rule::identifier, identifier);
+            let result = KaitaiExpressionParser::parse(Rule::identifier, identifier);
             assert!(
                 result.is_ok(),
                 "Expected identifier '{}' to be valid",
@@ -35,7 +39,7 @@ mod tests {
         let valid_operators = vec!["+", "-", "/", "*", "%"];
 
         for operator in valid_operators {
-            let result = ExpressionParser::parse(Rule::arithmetic_operator, operator);
+            let result = KaitaiExpressionParser::parse(Rule::arithmetic_operator, operator);
             assert!(
                 result.is_ok(),
                 "Expected operator '{}' to be valid",
@@ -50,7 +54,7 @@ mod tests {
         let valid_hex_integers = vec!["0xABC123", "0x0", "0xFFFFFFFF", "0xABC_DEF"];
 
         for hex_integer in valid_hex_integers {
-            let result = ExpressionParser::parse(Rule::hex_integer, hex_integer);
+            let result = KaitaiExpressionParser::parse(Rule::hex_integer, hex_integer);
             assert!(
                 result.is_ok(),
                 "Expected hexadecimal integer '{}' to be valid",
@@ -65,7 +69,7 @@ mod tests {
         let valid_bin_integers = vec!["0b10101010", "0b0", "0b11111111", "0b1010_1010"];
 
         for bin_integer in valid_bin_integers {
-            let result = ExpressionParser::parse(Rule::bin_integer, bin_integer);
+            let result = KaitaiExpressionParser::parse(Rule::bin_integer, bin_integer);
             assert!(
                 result.is_ok(),
                 "Expected binary integer '{}' to be valid",
@@ -80,7 +84,7 @@ mod tests {
         let valid_octal_integers = vec!["0o755", "0o0", "0o7777", "0o755_555"];
 
         for octal_integer in valid_octal_integers {
-            let result = ExpressionParser::parse(Rule::octal_integer, octal_integer);
+            let result = KaitaiExpressionParser::parse(Rule::octal_integer, octal_integer);
             assert!(
                 result.is_ok(),
                 "Expected octal integer '{}' to be valid",
@@ -103,7 +107,7 @@ mod tests {
         ];
 
         for float in valid_floats {
-            let result = ExpressionParser::parse(Rule::floating_point_number, float);
+            let result = KaitaiExpressionParser::parse(Rule::floating_point_number, float);
             assert!(
                 result.is_ok(),
                 "Expected floating-point number '{}' to be valid",
@@ -118,7 +122,7 @@ mod tests {
         let valid_booleans = vec!["true", "false"];
 
         for boolean in valid_booleans {
-            let result = ExpressionParser::parse(Rule::boolean, boolean);
+            let result = KaitaiExpressionParser::parse(Rule::boolean, boolean);
             assert!(
                 result.is_ok(),
                 "Expected boolean value '{}' to be valid",
@@ -138,7 +142,7 @@ mod tests {
         ];
 
         for integer_array in valid_integer_arrays {
-            let result = ExpressionParser::parse(Rule::integer_array, integer_array);
+            let result = KaitaiExpressionParser::parse(Rule::integer_array, integer_array);
             assert!(
                 result.is_ok(),
                 "Expected integer array '{}' to be valid",
@@ -153,12 +157,60 @@ mod tests {
         let valid_user_defined_types = vec!["_root", "_parent", "io"];
 
         for user_defined_type in valid_user_defined_types {
-            let result = ExpressionParser::parse(Rule::user_defined_type, user_defined_type);
+            let result = KaitaiExpressionParser::parse(Rule::user_defined_type, user_defined_type);
             assert!(
                 result.is_ok(),
                 "Expected user-defined type '{}' to be valid",
                 user_defined_type
             );
         }
+    }
+
+    #[test]
+    // Test parsing a basic arithmetic operation
+    fn test_parse_arithmetic_operation() {
+        let input = "1 + 1";
+        let result = KaitaiExpressionParser::parse(Rule::kaitai_expression, input);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    // Test parsing a user_defined type
+    fn test_parse_user_defined_type() {
+        let input = "_root.mo";
+        let result = KaitaiExpressionParser::parse(Rule::kaitai_expression, input);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    // Test parsing a ternary operator
+    fn test_parse_ternary_operator() {
+        let input = "disk_type.to_i & 0x01 != 0 ? 40 : 80";
+        let result = KaitaiExpressionParser::parse(Rule::kaitai_expression, input);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    // Test parsing an array at a given index
+    fn test_parse_array_index() {
+        let input = "block_groups[0]";
+        let result = KaitaiExpressionParser::parse(Rule::kaitai_expression, input);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    // Test parsing a complex arithmetic expression
+    fn test_parse_arithmetic_expression() {
+        let input = "b1 | (b2 << 8) | (b3 << 16)";
+        let result = KaitaiExpressionParser::parse(Rule::kaitai_expression, input);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    // Test parsing a comparison operation
+    fn test_parse_comparison() {
+        let input = "len_body != 0";
+        let result = KaitaiExpressionParser::parse(Rule::kaitai_expression, input);
+        assert!(result.is_ok());
     }
 }
