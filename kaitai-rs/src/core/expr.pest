@@ -8,7 +8,7 @@ identifier = { 'a'..'z' ~ ('a'..'z' | '0'..'9' | "_")* }
 user_defined_type = { "_root" | "_parent" | "io" }
 
 // Path element
-path_element = { method_call| enum | identifier | user_defined_type }
+path_element = { identifier | method_call | enum | user_defined_type }
 
 // Index
 index = { expression }
@@ -21,7 +21,7 @@ arithmetic_operator = { "+" | "-" | "/" | "*" | "%" }
 bitwise_operator    = { "<<" | ">>" | "&" | "|" | "^" }
 relational_operator = { "<" | "<=" | ">=" | ">" | "==" | "!=" }
 logical_operator    = { "not" | "and" | "or" }
-operator            = { (arithmetic_operator | bitwise_operator | relational_operator | logical_operator) }
+operator            = { arithmetic_operator | bitwise_operator | relational_operator | logical_operator }
 
 // String
 string = {
@@ -70,7 +70,6 @@ enum_method        = { "to_i" }
 array_method       = { "first" | "last" | "size" | "min" | "max" }
 method             = { integer_method | float_method | bytes_array_method | string_method | enum_method | array_method }
 
-// Method calls
 method_call = {
     (integer ~ "." ~ integer_method)
   | (float ~ "." ~ float_method)
@@ -81,28 +80,27 @@ method_call = {
   | (identifier ~ "." ~ method)
 }
 
-// Method call expression
 method_call_expression = { method_call | (full_expression ~ "." ~ method_call) }
 
 // Literal
 literal = { path | enum | string | floating_point_number | integer | boolean | array }
 
-// Expression
-expression = { literal ~ (operator ~ literal)* }
+// Primary expression
+primary_expression = { literal | "(" ~ expression ~ ")" }
 
-// Single expression
-single_expression = _{ "(" ~ expression ~ ")" | expression }
+// Binary expression
+binary_expression = { primary_expression ~ (operator ~ primary_expression)* }
+
+// Ternary expression
+ternary_expression = { binary_expression ~ "?" ~ expression ~ ":" ~ expression }
 
 // Full expression
-full_expression = _{ single_expression ~ (operator ~ single_expression)* }
+full_expression = { ternary_expression | binary_expression }
 
-// Ternary operation
-ternary_operator = { full_expression ~ "?" ~ full_expression ~ ":" ~ full_expression }
-
-// Ternary operator expression
-ternary_operator_expression = { "(" ~ ternary_operator ~ ")" | ternary_operator }
+// Expression
+expression = { full_expression }
 
 // Kaitai expression
-kaitai_expression = { SOI ~ (ternary_operator_expression | single_expression) ~ (operator ~ (ternary_operator_expression | single_expression))* ~ EOI }
+kaitai_expression = { SOI ~ expression ~ EOI }
 
 WHITESPACE = _{ " " | "\t" }

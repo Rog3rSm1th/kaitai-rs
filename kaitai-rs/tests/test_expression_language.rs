@@ -191,6 +191,14 @@ mod tests {
     }
 
     #[test]
+    // Test parsing nested ternary operators
+    fn test_parse_nested_ternary_operators() {
+        let input = "(t.to_i == 0) ? s2 : (s1.to_i == 0 ? 1 : 0)";
+        let result = KaitaiExpressionParser::parse(Rule::kaitai_expression, input);
+        assert!(result.is_ok());
+    }
+
+    #[test]
     // Test parsing an array at a given index
     fn test_parse_array_index() {
         let input = "block_groups[0]";
