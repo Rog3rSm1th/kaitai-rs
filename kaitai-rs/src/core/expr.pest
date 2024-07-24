@@ -2,7 +2,7 @@
 /// https://doc.kaitai.io/user_guide.html#_expression_language
 
 // Identifier
-identifier = { 'a'..'z' ~ ('a'..'z' | '0'..'9' | "_")* }
+identifier = @{ 'a'..'z' ~ ('a'..'z' | '0'..'9' | "_")* }
 
 // User-defined types
 user_defined_type = { "_root" | "_parent" | "io" }
@@ -20,8 +20,8 @@ path = { path_element ~ ("." ~ path_element | "[" ~ index ~ "]")* }
 arithmetic_operator = { "+" | "-" | "/" | "*" | "%" }
 bitwise_operator    = { "<<" | ">>" | "&" | "|" | "^" }
 relational_operator = { "<" | "<=" | ">=" | ">" | "==" | "!=" }
-logical_operator    = { "not" | "and" | "or" }
-operator            = { arithmetic_operator | bitwise_operator | relational_operator | logical_operator }
+logical_operator    = { "not" | "or" | "and" }
+operator            = {logical_operator | arithmetic_operator | bitwise_operator | relational_operator }
 
 // String
 string = {
@@ -37,10 +37,11 @@ unicode = @{ "u" ~ ASCII_HEX_DIGIT{4} }
 
 // Integers
 visual_separator = _{ "_" }
-hex_integer      = _{ "0" ~ ("x" | "X") ~ (ASCII_HEX_DIGIT ~ visual_separator?)+ }
-bin_integer      = _{ "0" ~ ("b" | "B") ~ (ASCII_BIN_DIGIT ~ visual_separator?)+ }
-octal_integer    = _{ "0" ~ ("o" | "O") ~ (ASCII_OCT_DIGIT ~ visual_separator?)+ }
-integer          =  { hex_integer | bin_integer | octal_integer | (("-" | "+")? ~ DECIMAL_NUMBER+) }
+hex_integer      = @{ "0" ~ ("x" | "X") ~ (ASCII_HEX_DIGIT ~ visual_separator?)+ }
+bin_integer      = @{ "0" ~ ("b" | "B") ~ (ASCII_BIN_DIGIT ~ visual_separator?)+ }
+octal_integer    = @{ "0" ~ ("o" | "O") ~ (ASCII_OCT_DIGIT ~ visual_separator?)+ }
+decimal_integer =  @{ ("-" | "+")? ~ DECIMAL_NUMBER+ }
+integer          =  { hex_integer | bin_integer | octal_integer | decimal_integer }
 
 // Float
 exponent                = _{ ("e" | "E") ~ ("-" | "+")? ~ DECIMAL_NUMBER+ }
@@ -83,7 +84,7 @@ method_call = {
 method_call_expression = { method_call | (full_expression ~ "." ~ method_call) }
 
 // Literal
-literal = { path | enum | string | floating_point_number | integer | boolean | array }
+literal = {  enum | path | string | floating_point_number | integer | boolean | array }
 
 // Primary expression
 primary_expression = { literal | "(" ~ expression ~ ")" }

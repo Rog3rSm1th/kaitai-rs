@@ -221,4 +221,12 @@ mod tests {
         let result = KaitaiExpressionParser::parse(Rule::kaitai_expression, input);
         assert!(result.is_ok());
     }
+
+    #[test]
+    // Test parsing a complex expression containing several elements
+    fn test_parse_complex_expression() {
+        let input = "message_id.value == 0xffff8100 and protocol_version == 0x01 and interface_version == 0x01 and message_type == message_type_enum::notification and return_code == return_code_enum::ok";
+        let result = KaitaiExpressionParser::parse(Rule::kaitai_expression, input);
+        assert!(result.is_ok());
+    }
 }
