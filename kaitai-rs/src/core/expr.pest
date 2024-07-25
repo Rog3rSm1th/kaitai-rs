@@ -1,4 +1,5 @@
 /// Pest grammar for the kaitai expression language
+///
 /// https://doc.kaitai.io/user_guide.html#_expression_language
 
 // Identifier
@@ -7,21 +8,27 @@ identifier = @{ 'a'..'z' ~ ('a'..'z' | '0'..'9' | "_")* }
 // User-defined types
 user_defined_type = { "_root" | "_parent" | "io" }
 
+// Expression operator
+expression_operator = { "sizeof" | "as" }
+
+// Expression operator with identifier
+expression_operator_with_identifier = { expression_operator ~ "<" ~ identifier ~ ">" }
+
 // Path element
 path_element = { identifier | method_call | enum | user_defined_type }
 
-// Index
+// Index of an array
 index = { expression }
 
-// Path
-path = { path_element ~ ("." ~ path_element | "[" ~ index ~ "]")* }
+// Path: A sequence of path elements
+path = { path_element ~ ("." ~ (expression_operator_with_identifier | path_element) | "[" ~ index ~ "]")* }
 
 // Operators
 arithmetic_operator = { "+" | "-" | "/" | "*" | "%" }
 bitwise_operator    = { "<<" | ">>" | "&" | "|" | "^" }
 relational_operator = { "<" | "<=" | ">=" | ">" | "==" | "!=" }
 logical_operator    = { "not" | "or" | "and" }
-operator            = {logical_operator | arithmetic_operator | bitwise_operator | relational_operator }
+operator            = { logical_operator | arithmetic_operator | bitwise_operator | relational_operator }
 
 // String
 string = {
@@ -35,12 +42,12 @@ inner_single_quoted = @{ (!("\\" | "\"" | "'") ~ ANY)* ~ (escape ~ inner_single_
 escape  = @{ "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode) }
 unicode = @{ "u" ~ ASCII_HEX_DIGIT{4} }
 
-// Integers
+// Integers: Integer literals in various bases (hexadecimal, binary, octal, and decimal)
 visual_separator = _{ "_" }
 hex_integer      = @{ "0" ~ ("x" | "X") ~ (ASCII_HEX_DIGIT ~ visual_separator?)+ }
 bin_integer      = @{ "0" ~ ("b" | "B") ~ (ASCII_BIN_DIGIT ~ visual_separator?)+ }
 octal_integer    = @{ "0" ~ ("o" | "O") ~ (ASCII_OCT_DIGIT ~ visual_separator?)+ }
-decimal_integer =  @{ ("-" | "+")? ~ DECIMAL_NUMBER+ }
+decimal_integer  = @{ ("-" | "+")? ~ DECIMAL_NUMBER+ }
 integer          =  { hex_integer | bin_integer | octal_integer | decimal_integer }
 
 // Float
@@ -62,7 +69,7 @@ boolean_array = { "[" ~ (boolean ~ ",")* ~ boolean ~ "]" }
 float_array   = { "[" ~ (floating_point_number ~ ",")* ~ floating_point_number ~ "]" }
 array         = { integer_array | boolean_array | float_array }
 
-// Method
+// Methods corresponding to each type
 integer_method     = { "to_s" }
 float_method       = { "to_i" }
 bytes_array_method = { "length" | ("to_s" ~ "(" ~ string ~ ")") }
@@ -71,6 +78,7 @@ enum_method        = { "to_i" }
 array_method       = { "first" | "last" | "size" | "min" | "max" }
 method             = { integer_method | float_method | bytes_array_method | string_method | enum_method | array_method }
 
+// Method call
 method_call = {
     (integer ~ "." ~ integer_method)
   | (float ~ "." ~ float_method)
@@ -84,7 +92,7 @@ method_call = {
 method_call_expression = { method_call | (full_expression ~ "." ~ method_call) }
 
 // Literal
-literal = {  enum | path | string | floating_point_number | integer | boolean | array }
+literal = { enum | path | string | floating_point_number | integer | boolean | array }
 
 // Primary expression
 primary_expression = { literal | "(" ~ expression ~ ")" }

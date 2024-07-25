@@ -229,4 +229,12 @@ mod tests {
         let result = KaitaiExpressionParser::parse(Rule::kaitai_expression, input);
         assert!(result.is_ok());
     }
+
+    #[test]
+    // Test parsing an expression containing an expression operator
+    fn test_parse_expression_operator() {
+        let input = "_root.constant_pool[name_index - 1].cp_info.as<utf8_cp_info>.value";
+        let result = KaitaiExpressionParser::parse(Rule::kaitai_expression, input);
+        assert!(result.is_ok());
+    }
 }
