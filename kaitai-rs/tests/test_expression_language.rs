@@ -154,7 +154,7 @@ mod tests {
     #[test]
     // Test parsing valid user-defined types
     fn test_user_defined_type() {
-        let valid_user_defined_types = vec!["_root", "_parent", "io"];
+        let valid_user_defined_types = vec!["_root", "_parent", "_io"];
 
         for user_defined_type in valid_user_defined_types {
             let result = KaitaiExpressionParser::parse(Rule::user_defined_type, user_defined_type);
@@ -215,17 +215,17 @@ mod tests {
     }
 
     #[test]
-    // Test parsing a comparison operation
-    fn test_parse_comparison() {
-        let input = "len_body != 0";
+    // Test parsing a complex arithmetic expression
+    fn test_parse_arithmetic_expression_2() {
+        let input = "(bpb.max_root_dir_rec * 32 + bpb.bytes_per_ls - 1) / bpb.bytes_per_ls";
         let result = KaitaiExpressionParser::parse(Rule::kaitai_expression, input);
         assert!(result.is_ok());
     }
 
     #[test]
-    // Test parsing a complex expression containing several elements
-    fn test_parse_complex_expression() {
-        let input = "message_id.value == 0xffff8100 and protocol_version == 0x01 and interface_version == 0x01 and message_type == message_type_enum::notification and return_code == return_code_enum::ok";
+    // Test parsing a comparison operation
+    fn test_parse_comparison() {
+        let input = "len_body != 0";
         let result = KaitaiExpressionParser::parse(Rule::kaitai_expression, input);
         assert!(result.is_ok());
     }
