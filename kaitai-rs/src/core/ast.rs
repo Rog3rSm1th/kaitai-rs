@@ -1,3 +1,4 @@
+use colored::*;
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -197,18 +198,20 @@ impl AST {
         }
     }
 
-    /// Prints the AST in a readable format
+    /// Prints the AST in a readable format with colored node names
     pub fn print_ast(&self) {
         self.print_node(self.get_root(), 0, 0);
     }
 
-    /// Helper function to print a node and its children recursively
+    /// Helper function to print a node and its children recursively with colored node names
     fn print_node(&self, node: &NodeRef, level: usize, index: usize) {
         let node_borrowed = node.borrow();
         let id_or_index = node_borrowed
             .get_id()
             .clone()
-            .unwrap_or_else(|| format!("{}", index));
+            .unwrap_or_else(|| format!("{}", index))
+            .bright_green(); // Color the node name or index in green
+
         if node_borrowed.get_children().is_empty() {
             // Print the node name or index with the appropriate indentation and its data
             let data = match (&node_borrowed.data, node_borrowed.get_node_type()) {
