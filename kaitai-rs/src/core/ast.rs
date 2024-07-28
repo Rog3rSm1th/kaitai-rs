@@ -210,16 +210,22 @@ impl AST {
             .get_id()
             .clone()
             .unwrap_or_else(|| format!("{}", index))
-            .bright_green(); // Color the node name or index in green
-
+            // Color the node name or index in green
+            .bright_green();
+    
         if node_borrowed.get_children().is_empty() {
             // Print the node name or index with the appropriate indentation and its data
             let data = match (&node_borrowed.data, node_borrowed.get_node_type()) {
-                // String
+                 // String
                 (Some(d), Some(NodeType::String)) => {
-                    format!("{:?}", String::from_utf8_lossy(d).trim())
+                    let filtered_string: String = d.iter()
+                        // Remove null bytes
+                        .filter(|&&byte| byte != 0)
+                        .map(|&byte| byte as char)
+                        .collect();
+                    format!("{:?}", filtered_string.trim())
                 }
-                // integer
+                // Integer
                 (Some(d), Some(NodeType::Integer)) => {
                     let integer = match d.len() {
                         1 => u8::from_le_bytes(d[..1].try_into().unwrap()) as u64,
@@ -231,8 +237,11 @@ impl AST {
                             return;
                         }
                     };
-                    // Array
-                    format!("0x{:x}", integer)
+                    // Color the decimal comment in grey
+                    let decimal = format!("// {}", integer).bright_black();
+
+                    // Format the integer
+                    format!("0x{:x} {}", integer, decimal)
                 }
                 (Some(d), _) => format!("{:?}", d),
                 (None, _) => "None".to_string(),
