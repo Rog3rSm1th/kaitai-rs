@@ -1,3 +1,4 @@
+use colored::*;
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -197,26 +198,34 @@ impl AST {
         }
     }
 
-    /// Prints the AST in a readable format
+    /// Prints the AST in a readable format with colored node names
     pub fn print_ast(&self) {
         self.print_node(self.get_root(), 0, 0);
     }
 
-    /// Helper function to print a node and its children recursively
+    /// Helper function to print a node and its children recursively with colored node names
     fn print_node(&self, node: &NodeRef, level: usize, index: usize) {
         let node_borrowed = node.borrow();
         let id_or_index = node_borrowed
             .get_id()
             .clone()
-            .unwrap_or_else(|| format!("{}", index));
+            .unwrap_or_else(|| format!("{}", index))
+            // Color the node name or index in green
+            .bright_green();
+    
         if node_borrowed.get_children().is_empty() {
             // Print the node name or index with the appropriate indentation and its data
             let data = match (&node_borrowed.data, node_borrowed.get_node_type()) {
-                // String
+                 // String
                 (Some(d), Some(NodeType::String)) => {
-                    format!("{:?}", String::from_utf8_lossy(d).trim())
+                    let filtered_string: String = d.iter()
+                        // Remove null bytes
+                        .filter(|&&byte| byte != 0)
+                        .map(|&byte| byte as char)
+                        .collect();
+                    format!("{:?}", filtered_string.trim())
                 }
-                // integer
+                // Integer
                 (Some(d), Some(NodeType::Integer)) => {
                     let integer = match d.len() {
                         1 => u8::from_le_bytes(d[..1].try_into().unwrap()) as u64,
@@ -228,8 +237,11 @@ impl AST {
                             return;
                         }
                     };
-                    // Array
-                    format!("0x{:x}", integer)
+                    // Color the decimal comment in grey
+                    let decimal = format!("// {}", integer).bright_black();
+
+                    // Format the integer
+                    format!("0x{:x} {}", integer, decimal)
                 }
                 (Some(d), _) => format!("{:?}", d),
                 (None, _) => "None".to_string(),
