@@ -69,3 +69,11 @@ pub fn evaluate(ast: &AST, expr: &str) -> i32 {
     // Default return value in case of errors or unsupported expressions
     0
 }
+
+#[cfg(test)]
+mod cool_tests {
+    #[test]
+    fn first_test() {
+        // Test Code
+    }
+}

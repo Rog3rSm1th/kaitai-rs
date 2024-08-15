@@ -212,13 +212,14 @@ impl AST {
             .unwrap_or_else(|| format!("{}", index))
             // Color the node name or index in green
             .bright_green();
-    
+
         if node_borrowed.get_children().is_empty() {
             // Print the node name or index with the appropriate indentation and its data
             let data = match (&node_borrowed.data, node_borrowed.get_node_type()) {
-                 // String
+                // String
                 (Some(d), Some(NodeType::String)) => {
-                    let filtered_string: String = d.iter()
+                    let filtered_string: String = d
+                        .iter()
                         // Remove null bytes
                         .filter(|&&byte| byte != 0)
                         .map(|&byte| byte as char)
