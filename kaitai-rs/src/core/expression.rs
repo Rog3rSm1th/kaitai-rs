@@ -1,4 +1,6 @@
 use crate::core::ast::AST;
+use num_bigint::BigInt;
+use num_traits::Num;
 use pest::Parser;
 use pest_derive::Parser;
 use std::borrow::Borrow;
@@ -7,43 +9,28 @@ use std::borrow::Borrow;
 #[grammar = "./core/expr.pest"]
 struct ExprParser;
 
-/// Converts a Vec<u8> to an i32 assuming little-endian encoding
-fn vec_u8_to_i32(vec: &Vec<u8>) -> Result<i32, String> {
-    if vec.len() != 4 {
-        return Err(String::from("The vector must contain exactly 4 elements"));
-    }
-
-    // Convert the entire Vec<u8> to i32 assuming little-endian encoding
-    let integer = i32::from_le_bytes([vec[0], vec[1], vec[2], vec[3]]);
-
-    Ok(integer)
-}
-
-/// Parses an identifier and returns the corresponding i32 value from the AST
-fn parse_identifier(ast: &AST, identifier: &str) -> Option<i32> {
+/// Parses an identifier and returns the corresponding Vec<u8> value from the AST
+fn parse_identifier(ast: &AST, identifier: &str) -> Option<Vec<u8>> {
     // Look up the node in the AST by identifier
     if let Some(node_ref) = ast.get_node_by_id(identifier) {
         let node = node_ref.borrow();
 
         // Retrieve data from the node
         if let Some(data) = node.get_data() {
-            // Convert data to i32 directly
-            if let Ok(value) = vec_u8_to_i32(data) {
-                return Some(value);
-            }
+            return Some(data.clone());
         }
     }
 
     None
 }
 
-/// Parses an integer from a string and returns it as i32
-fn parse_integer(integer_str: &str) -> Option<i32> {
-    integer_str.parse::<i32>().ok()
+/// Parses an integer from a string and returns it as BigInt
+fn parse_integer(integer_str: &str) -> Option<BigInt> {
+    BigInt::from_str_radix(integer_str, 10).ok()
 }
 
-/// Parses a path_element constituted of only one element and returns the corresponding i32 value from the AST
-fn parse_path_element(ast: &AST, path_element: &str) -> Option<i32> {
+/// Parses a path_element constituted of only one element and returns the corresponding Vec<u8> value from the AST
+fn parse_path_element(ast: &AST, path_element: &str) -> Option<Vec<u8>> {
     // Try parsing an identifier
     if let Ok(pairs) = ExprParser::parse(Rule::identifier, path_element) {
         for pair in pairs {
@@ -58,8 +45,8 @@ fn parse_path_element(ast: &AST, path_element: &str) -> Option<i32> {
     todo!()
 }
 
-/// Parses a path constituted of only one element and returns the corresponding i32 value from the AST
-fn parse_path(ast: &AST, path: &str) -> Option<i32> {
+/// Parses a path constituted of only one element and returns the corresponding Vec<u8> value from the AST
+fn parse_path(ast: &AST, path: &str) -> Option<Vec<u8>> {
     // Try parsing a path
     if let Ok(pairs) = ExprParser::parse(Rule::path, path) {
         for pair in pairs {
@@ -74,19 +61,30 @@ fn parse_path(ast: &AST, path: &str) -> Option<i32> {
     todo!()
 }
 
-/// Evaluates a kaitai language expression against an Abstract Syntax Tree (AST) of Vec<u8> nodes and returns an i32 result
+/// Converts a Vec<u8> to a BigInt assuming big-endian encoding
+/// TODO : Create a global endianness parameter
+fn vec_u8_to_bigint(vec: &Vec<u8>) -> BigInt {
+    let mut bigint = BigInt::from(0);
+    for &byte in vec.iter().rev() {
+        bigint = (bigint << 8) | BigInt::from(byte);
+    }
+    bigint
+}
+
+/// Evaluates a kaitai language expression against an Abstract Syntax Tree (AST) of Vec<u8> nodes and returns a BigInt result
 /// Now handles expressions composed solely of a single node identifier or an integer
-pub fn evaluate(ast: &AST, expr: &str) -> i32 {
+pub fn evaluate(ast: &AST, expr: &str) -> BigInt {
     // Try parsing an integer
     if let Some(integer_value) = parse_integer(expr) {
         return integer_value;
     }
-
+    
     // Directly try to parse the expression as a single node identifier
-    if let Some(value) = parse_path(ast, expr) {
-        return value;
+    if let Some(raw_value) = parse_path(ast, expr) {
+        // Convert the raw Vec<u8> to BigInt assuming little-endian encoding
+        return vec_u8_to_bigint(&raw_value);
     }
 
     // Default return value in case of errors or unsupported expressions
-    0
+    BigInt::from(0)
 }

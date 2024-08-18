@@ -8,6 +8,7 @@ use crate::ks_language::language::attribute::Repeat;
 use crate::ks_language::language::kaitai_type::PureType;
 use crate::ks_language::language::kaitai_type::{parse_strz, parse_unsigned_integer};
 
+use num_traits::ToPrimitive;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
@@ -74,7 +75,8 @@ impl KaitaiStruct {
         let repeat_count = if let Some(repeat) = &attribute.repeat {
             if let Repeat::Expr = repeat {
                 let count = evaluate(&self.ast, &attribute.repeat_expr.as_ref().unwrap());
-                count as usize
+                // Convert BigInt to usize safely
+                count.to_usize().unwrap_or(0)
             } else {
                 1
             }
