@@ -42,7 +42,7 @@ fn parse_integer(integer_str: &str) -> Option<i32> {
     integer_str.parse::<i32>().ok()
 }
 
-/// Parses a path_element and returns the corresponding i32 value from the AST
+/// Parses a path_element constituted of only one element and returns the corresponding i32 value from the AST
 fn parse_path_element(ast: &AST, path_element: &str) -> Option<i32> {
     // Try parsing an identifier
     if let Ok(pairs) = ExprParser::parse(Rule::identifier, path_element) {
@@ -58,6 +58,22 @@ fn parse_path_element(ast: &AST, path_element: &str) -> Option<i32> {
     todo!()
 }
 
+/// Parses a path constituted of only one element and returns the corresponding i32 value from the AST
+fn parse_path(ast: &AST, path: &str) -> Option<i32> {
+    // Try parsing a path
+    if let Ok(pairs) = ExprParser::parse(Rule::path, path) {
+        for pair in pairs {
+            let path_str = pair.as_str();
+            if let Some(value) = parse_path_element(ast, path_str) {
+                return Some(value);
+            }
+        }
+    }
+
+    // TODO: Handle more complex paths with indices or concatenation using a dot
+    todo!()
+}
+
 /// Evaluates a kaitai language expression against an Abstract Syntax Tree (AST) of Vec<u8> nodes and returns an i32 result
 /// Now handles expressions composed solely of a single node identifier or an integer
 pub fn evaluate(ast: &AST, expr: &str) -> i32 {
@@ -67,7 +83,7 @@ pub fn evaluate(ast: &AST, expr: &str) -> i32 {
     }
 
     // Directly try to parse the expression as a single node identifier
-    if let Some(value) = parse_path_element(ast, expr) {
+    if let Some(value) = parse_path(ast, expr) {
         return value;
     }
 
