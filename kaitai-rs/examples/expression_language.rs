@@ -26,9 +26,17 @@ fn main() {
     // Print the AST
     parser.ast.print_ast();
 
-    // Evaluate an expression on this AST and print the result
+    // Evaluate an expression composed of an integer and print the result
     let mut evaluated_string = "1";
-    let evaluated_expression = evaluate(&parser.ast, evaluated_string);
+    let mut evaluated_expression = evaluate(&parser.ast, evaluated_string);
+    println!(
+        "\nevaluated_expression : \n{} -> {}",
+        evaluated_string, evaluated_expression
+    );
+
+    // Evaluate an expression on this AST and print the result
+    evaluated_string = "magic";
+    evaluated_expression = evaluate(&parser.ast, evaluated_string);
     println!(
         "\nevaluated_expression : \n{} -> {}",
         evaluated_string, evaluated_expression

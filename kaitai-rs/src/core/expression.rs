@@ -7,15 +7,14 @@ use std::borrow::Borrow;
 #[grammar = "./core/expr.pest"]
 struct ExprParser;
 
-/// Converts the first 4 bytes of a Vec<u8> to an i32
+/// Converts a Vec<u8> to an i32 assuming little-endian encoding
 fn vec_u8_to_i32(vec: &Vec<u8>) -> Result<i32, String> {
-    if vec.len() < 4 {
-        return Err(String::from("The vector must contain at least 4 elements"));
+    if vec.len() != 4 {
+        return Err(String::from("The vector must contain exactly 4 elements"));
     }
 
-    // Take the first 4 bytes and convert them to i32
-    let bytes: [u8; 4] = [vec[0], vec[1], vec[2], vec[3]];
-    let integer = i32::from_le_bytes(bytes);
+    // Convert the entire Vec<u8> to i32 assuming little-endian encoding
+    let integer = i32::from_le_bytes([vec[0], vec[1], vec[2], vec[3]]);
 
     Ok(integer)
 }
@@ -23,7 +22,7 @@ fn vec_u8_to_i32(vec: &Vec<u8>) -> Result<i32, String> {
 /// Parses an identifier and returns the corresponding i32 value from the AST
 fn parse_identifier(ast: &AST, identifier: &str) -> Option<i32> {
     // Look up the node in the AST by identifier
-    if let Some(node_ref) = ast.clone().get_node_by_id(identifier) {
+    if let Some(node_ref) = ast.get_node_by_id(identifier) {
         let node = node_ref.borrow();
 
         // Retrieve data from the node
@@ -43,37 +42,35 @@ fn parse_integer(integer_str: &str) -> Option<i32> {
     integer_str.parse::<i32>().ok()
 }
 
-/// Evaluates a kaitai language expression against an Abstract Syntax Tree (AST) of Vec<u8> nodes and returns an i32 result
-/// TODO: handle more complex expressions, for now we only evaluate expressions composed solely of an integer or an identifier
-pub fn evaluate(ast: &AST, expr: &str) -> i32 {
+/// Parses a path_element and returns the corresponding i32 value from the AST
+fn parse_path_element(ast: &AST, path_element: &str) -> Option<i32> {
     // Try parsing an identifier
-    if let Ok(pairs) = ExprParser::parse(Rule::identifier, expr) {
+    if let Ok(pairs) = ExprParser::parse(Rule::identifier, path_element) {
         for pair in pairs {
             let identifier = pair.as_str();
             if let Some(value) = parse_identifier(ast, identifier) {
-                return value;
+                return Some(value);
             }
         }
     }
 
+    // TODO: Handle method_call, user_defined_type and other path_element types
+    todo!()
+}
+
+/// Evaluates a kaitai language expression against an Abstract Syntax Tree (AST) of Vec<u8> nodes and returns an i32 result
+/// Now handles expressions composed solely of a single node identifier or an integer
+pub fn evaluate(ast: &AST, expr: &str) -> i32 {
     // Try parsing an integer
-    if let Ok(pairs) = ExprParser::parse(Rule::integer, expr) {
-        for pair in pairs {
-            let integer_str = pair.as_str();
-            if let Some(integer_value) = parse_integer(integer_str) {
-                return integer_value;
-            }
-        }
+    if let Some(integer_value) = parse_integer(expr) {
+        return integer_value;
+    }
+
+    // Directly try to parse the expression as a single node identifier
+    if let Some(value) = parse_path_element(ast, expr) {
+        return value;
     }
 
     // Default return value in case of errors or unsupported expressions
     0
-}
-
-#[cfg(test)]
-mod cool_tests {
-    #[test]
-    fn first_test() {
-        // Test Code
-    }
 }
