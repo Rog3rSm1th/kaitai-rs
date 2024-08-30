@@ -71,18 +71,55 @@ fn vec_u8_to_bigint(vec: &Vec<u8>) -> BigInt {
     bigint
 }
 
+fn parse_literal(ast: &AST, literal_str: &str) -> Option<BigInt> {
+    // Try parsing a literal using the literal rule
+    if let Ok(pairs) = ExprParser::parse(Rule::literal, literal_str) {
+        for pair in pairs {
+            // Iterate through the inner pairs if the current pair has any
+            for inner_pair in pair.into_inner() {
+                match inner_pair.as_rule() {
+                    Rule::integer => {
+                        if let Some(integer_value) = parse_integer(inner_pair.as_str()) {
+                            return Some(integer_value);
+                        }
+                    }
+                    Rule::path => {
+                        if let Some(raw_value) = parse_path(ast, inner_pair.as_str()) {
+                            // Convert the raw Vec<u8> to BigInt assuming little-endian encoding
+                            return Some(vec_u8_to_bigint(&raw_value));
+                        }
+                    }
+                    // Handle floating point number parsing
+                    Rule::floating_point_number => {
+                        todo!();
+                    }
+                    // Handle boolean parsing
+                    Rule::boolean => {
+                        todo!();
+                    }
+                    // Handle string parsing
+                    Rule::string => {
+                        todo!();
+                    }
+                    // Handle array parsing
+                    Rule::array => {
+                        todo!();
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+
+    None
+}
+
 /// Evaluates a kaitai language expression against an Abstract Syntax Tree (AST) of Vec<u8> nodes and returns a BigInt result
 /// Now handles expressions composed solely of a single node identifier or an integer
 pub fn evaluate(ast: &AST, expr: &str) -> BigInt {
-    // Try parsing an integer
-    if let Some(integer_value) = parse_integer(expr) {
-        return integer_value;
-    }
-    
-    // Directly try to parse the expression as a single node identifier
-    if let Some(raw_value) = parse_path(ast, expr) {
-        // Convert the raw Vec<u8> to BigInt assuming little-endian encoding
-        return vec_u8_to_bigint(&raw_value);
+    // Try parsing a literal
+    if let Some(literal_value) = parse_literal(ast, expr) {
+        return literal_value;
     }
 
     // Default return value in case of errors or unsupported expressions
