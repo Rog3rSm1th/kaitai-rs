@@ -1,9 +1,12 @@
-use crate::core::ast::AST;
+use std::borrow::Borrow;
+
 use num_bigint::BigInt;
 use num_traits::Num;
+use num_traits::ToPrimitive;
 use pest::Parser;
 use pest_derive::Parser;
-use std::borrow::Borrow;
+
+use crate::core::ast::AST;
 
 #[derive(Parser)]
 #[grammar = "./core/expr.pest"]
@@ -71,6 +74,7 @@ fn vec_u8_to_bigint(vec: &Vec<u8>) -> BigInt {
     bigint
 }
 
+/// Parses a literal
 fn parse_literal(ast: &AST, literal_str: &str) -> Option<BigInt> {
     // Try parsing a literal using the literal rule
     if let Ok(pairs) = ExprParser::parse(Rule::literal, literal_str) {
@@ -110,18 +114,115 @@ fn parse_literal(ast: &AST, literal_str: &str) -> Option<BigInt> {
             }
         }
     }
-
     None
 }
 
-/// Evaluates a kaitai language expression against an Abstract Syntax Tree (AST) of Vec<u8> nodes and returns a BigInt result
-/// Now handles expressions composed solely of a single node identifier or an integer
+// Parses a binary expression
+// TODO : Handle parentheses & order of operations
+fn parse_binary_expression(ast: &AST, expr: &str) -> Option<BigInt> {
+    if let Ok(pairs) = ExprParser::parse(Rule::binary_expression, expr) {
+        let mut terms = Vec::new();
+        let mut operators = Vec::new();
+
+        for pair in pairs {
+            for inner_pair in pair.into_inner() {
+                match inner_pair.as_rule() {
+                    Rule::primary_expression => {
+                        let deepest = get_deepest_inner_pair(inner_pair);
+                        if let Some(value) = parse_primary_expression(ast, deepest.as_str()) {
+                            terms.push(value);
+                        }
+                    }
+                    Rule::operator => {
+                        let deepest = get_deepest_inner_pair(inner_pair);
+                        operators.push(deepest.as_str());
+                    }
+                    _ => {}
+                }
+            }
+        }
+
+        // If there's only one term, return it directly
+        if terms.len() == 1 {
+            return Some(terms[0].clone());
+        }
+
+        // Evaluate the expression left-to-right using the operators
+        let mut result = terms[0].clone();
+        for (i, op) in operators.iter().enumerate() {
+            let rhs = &terms[i + 1];
+            result = match *op {
+                "+" => result + rhs,
+                "-" => result - rhs,
+                "*" => result * rhs,
+                "/" => result / rhs,
+                "%" => result % rhs,
+                "<<" => result << rhs.to_usize().unwrap(),
+                ">>" => result >> rhs.to_usize().unwrap(),
+                "&" => result & rhs,
+                "|" => result | rhs,
+                "^" => result ^ rhs,
+                "==" => return Some((result == *rhs).into()),
+                "!=" => return Some((result != *rhs).into()),
+                "<" => return Some((result < *rhs).into()),
+                "<=" => return Some((result <= *rhs).into()),
+                ">" => return Some((result > *rhs).into()),
+                ">=" => return Some((result >= *rhs).into()),
+                "and" => {
+                    return Some((result != BigInt::from(0) && rhs != &BigInt::from(0)).into())
+                }
+                "or" => return Some((result != BigInt::from(0) || rhs != &BigInt::from(0)).into()),
+                "not" => return Some((result == BigInt::from(0)).into()),
+                _ => return None,
+            };
+        }
+        return Some(result);
+    }
+    None
+}
+
+/// Recursive function to get the deepest inner pair
+fn get_deepest_inner_pair(pair: pest::iterators::Pair<Rule>) -> pest::iterators::Pair<Rule> {
+    let mut current_pair = pair;
+    while let Some(inner) = current_pair.clone().into_inner().next() {
+        current_pair = inner;
+    }
+    current_pair
+}
+
+/// Parses a primary expression and returns its BigInt representation
+fn parse_primary_expression(ast: &AST, expr: &str) -> Option<BigInt> {
+    if let Ok(pairs) = ExprParser::parse(Rule::primary_expression, expr) {
+        for pair in pairs {
+            for inner_pair in pair.into_inner() {
+                match inner_pair.as_rule() {
+                    Rule::literal => {
+                        if let Some(literal_value) = parse_literal(ast, inner_pair.as_str()) {
+                            return Some(literal_value);
+                        }
+                    }
+                    Rule::identifier => {
+                        if let Some(raw_value) = parse_identifier(ast, inner_pair.as_str()) {
+                            return Some(vec_u8_to_bigint(&raw_value));
+                        }
+                    }
+                    Rule::expression => {
+                        let expr_value = evaluate(ast, inner_pair.as_str());
+                        return Some(expr_value);
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+    None
+}
+
+/// Evaluates a kaitai language expression against an AST of Vec<u8> nodes and returns a BigInt result
 pub fn evaluate(ast: &AST, expr: &str) -> BigInt {
-    // Try parsing a literal
-    if let Some(literal_value) = parse_literal(ast, expr) {
-        return literal_value;
+    if let Some(binary_value) = parse_binary_expression(ast, expr) {
+        return binary_value;
     }
 
-    // Default return value in case of errors or unsupported expressions
     BigInt::from(0)
 }

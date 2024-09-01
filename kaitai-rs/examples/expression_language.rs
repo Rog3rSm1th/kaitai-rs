@@ -34,8 +34,16 @@ fn main() {
         evaluated_string, evaluated_expression
     );
 
-    // Evaluate an expression on this AST and print the result
+    // Evaluate an expression contaning an id on this AST and print the result
     evaluated_string = "magic";
+    evaluated_expression = evaluate(&parser.ast, evaluated_string);
+    println!(
+        "\nevaluated_expression : \n{} -> {}",
+        evaluated_string, evaluated_expression
+    );
+
+    // Evaluate an expression containing a primary expression on this AST and print the result
+    evaluated_string = "magic + 1";
     evaluated_expression = evaluate(&parser.ast, evaluated_string);
     println!(
         "\nevaluated_expression : \n{} -> {}",
